@@ -14,8 +14,8 @@ This allows for rapid 3D printing of text, rendered equations, or simple digital
 
 There are 3 principal functions to import from stl_tools.
 
-### `numpy2stl(A, fn, scale=0.1, mask_val = -np.inf, ascii=False)`
-    
+### `numpy2stl`
+    numpy2stl(A, fn, scale=0.1, mask_val = -np.inf, ascii=False)
     Reads a numpy array, and outputs an STL file
 
     Inputs:
@@ -51,8 +51,8 @@ NOTE: the STL file produced does not have surface normals calculated for the def
 It seems that in most applications, they are either not needed in the STL file, or are computed on the fly as needed. If someone has an application which
 requires these, let me know and I can compute & include them based on an optional argument.
 
-### `text2png(text, fn = None)`
-
+### `text2png`
+    text2png(text, fn = None)
     Renders inputted text to a png image using matplotlib.
 
     Inputs:
@@ -67,15 +67,15 @@ requires these, let me know and I can compute & include them based on an optiona
 `text2png()` was written as an intermediate helper function to render text to pngs, to then be imported, filtered, and meshed.
 However, it may be useful in it's own right. For example, it can be used alone to render LaTeX expressions into images, to be imported into WYSIWYG document editors like MS Word or LibreOffice Writer. 
 
-### `text2array(text)`
-    """
+### `text2array`
+    text2array(text)
     Renders inputted text, and returns array representation.
 
     Inputs:
      text (string) -  text to render
 
     Returns: A (ndarray) - 2D numpy array of rendered text
-    """
+    
 
 `text2array()` renders inputted text using `text2png()`, but imports the resulting png as an ndarray and deletes the intermediate file.
 There may be a direct way to render the matplotlib figure as an array without using an intermediate file, but I could not seem to find a simple
