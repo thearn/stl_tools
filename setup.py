@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(name='stl_tools',
     version='0.1',
-    install_requires=['stl_tools'],
+    install_requires=['numpy', 'scipy', 'matplotlib'],
     description="Python code to generate STL files from numpy arrays and text",
     author='Tristan Hearn',
     author_email='tristanhearn@gmail.com',
