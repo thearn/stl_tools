@@ -60,7 +60,7 @@ A = gaussian_filter(A, 1) # smoothing
 numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val = 5.)
 ```
 
-
+![Alt text](http://i.imgur.com/LFvw5Yn.png "Screenshot")
 [Click to view STL (view as wireframe)](examples/NASA.stl)
 
 ```python
