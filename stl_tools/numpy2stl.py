@@ -46,7 +46,6 @@ def writeSTL(facets, file_name, ascii=False):
 
     f.close()
 
-
 def numpy2stl(A, fn, scale=0.1, mask_val = -np.inf, ascii=False, calc_normals=False):
     """
     Reads a numpy array, and outputs an STL file
@@ -67,35 +66,33 @@ def numpy2stl(A, fn, scale=0.1, mask_val = -np.inf, ascii=False, calc_normals=Fa
 
     Returns: (None)
     """
-    A = np.rot90(A, k=3)
+    A = scale * np.rot90(A, k=3)
+    A - A.min()
     m_,n_ = A.shape
 
-    m=float(m_)
-    n=float(n_)
+    m, n = float(m_), float(n_)
 
-    facets=[]
-    for i, k in product(xrange(m), xrange(n))
-        f1 = [0,0,0]
+    facets = []
+    for i, k in product(xrange(m_ - 1), xrange(n_ - 1)):
 
-        this_pt = np.array([i - m/2, k - n/2, scale * A[i,k]])
-        top_left = np.array([i - m/2, k + 1 - n/2, scale * A[i,k+1]])
-        bottom_left = np.array([i + 1 - m/2, k - n/2, scale * A[i+1,k]])
-        bottom_right = np.array([i + 1 - m/2, k + 1 - n/2, scale * A[i+1,k+1]])
+        this_pt = np.array([i - m/2., k - n/2, A[i,k]])
+        top_left = np.array([i - m/2., k + 1 - n/2, A[i,k+1]])
+        bottom_left = np.array([i + 1. - m/2, k - n/2, A[i+1,k]])
+        bottom_right = np.array([i + 1. - m/2, k + 1 - n/2, A[i+1,k+1]])
         
-        n1 = np.cross(top_left-this_pt, bottom_left-this_pt)
-        n1 = n1/np.linalg.norm(n1)
-        if len(n1) != 3:
-            n1 = np.zeros(3)
+        if calc_normals:
+            n1 = np.cross(top_left-this_pt, bottom_left-this_pt)
+            n1 = n1/np.linalg.norm(n1)
 
-        n2 = np.cross(bottom_right-this_pt, bottom_left-this_pt)
-        n2 = n2/np.linalg.norm(n2)
-        if len(n2) != 3:
-            n2 = np.zeros(3)
+            n2 = np.cross(bottom_right-this_pt, bottom_left-this_pt)
+            n2 = n2/np.linalg.norm(n2)
+        else:
+            n1, n2 = np.zeros(3), np.zeros(3)
 
         if this_pt[-1] > mask_val and top_left[-1] > mask_val and bottom_left[-1] > mask_val:
             facet = np.concatenate([n1, this_pt, top_left, bottom_left])
             facets.append(facet)
-            
+
         if this_pt[-1] > mask_val and bottom_right[-1] > mask_val and bottom_left[-1] > mask_val:
             facet = np.concatenate([n2, this_pt, bottom_right, bottom_left])
             facets.append(facet)

@@ -92,6 +92,7 @@ from stl_tools import numpy2stl, text2png, text2array
 
 from scipy.misc import lena
 A = lena()
+A = median_filter(A, size=(5, 5)) #smoothing
 numpy2stl(A, "examples\Lena.stl", scale=0.25)
 ```
 
