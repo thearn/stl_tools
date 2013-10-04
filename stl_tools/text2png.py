@@ -2,7 +2,7 @@ import pylab
 import os
 from scipy.misc import imread
 
-def text2png(text, fn = None):
+def text2png(text, fn = None, fontsize=100):
     """
     Renders inputted text to a png image using matplotlib.
 
@@ -22,14 +22,15 @@ def text2png(text, fn = None):
          horizontalalignment='center',
          verticalalignment='center',
          transform = ax.transAxes,
-         fontsize=200)
+         fontsize=fontsize)
     ax.set_axis_off()
     ax.autoscale_view(True,True,True)
     if not fn:
         fn = ''.join(e for e in text if e.isalnum())
     f.savefig(fn + '.png', bbox_inches='tight')
+    pylab.close()
 
-def text2array(text):
+def text2array(text, fontsize=100):
     """
     Renders inputted text, and returns array representation.
 
@@ -39,10 +40,10 @@ def text2array(text):
     Returns: A (ndarray) - 2D numpy array of rendered text
     """
     
-    text2png(text, fn="_text")
+    text2png(text, fn="_text", fontsize=fontsize)
     A = imread("_text.png")
     os.remove("_text.png")
-    return A
+    return A.max() - A
 
 if __name__ == "__main__":
     #LaTeX for Navier-Stokes equation
