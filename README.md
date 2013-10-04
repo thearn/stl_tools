@@ -8,41 +8,52 @@ This allows for rapid 3D printing of text, rendered equations, or simple digital
 Use them for product prototyping, art, cookie cutters, ice cube trays, chocolate molds, (see [this](http://www.makerbot.com/tutorials/making-chocolate-molds/) 
 to learn how to make a printed object food-safe) or whatever else you can think of.
 
+Some modification may be needed to the STL or printer settings to get certain shapes to print cleanly (ie. thicker base, 
+support structures, etc).
+
 Besides printing, these can also be merged into other 3D meshes for many other 
-possible uses, using programs such as Blender.
+possible uses, using programs such as [Blender](http://www.blender.org/).
 
 Also included is a function that can convert raw LaTeX expressions to high
 quality .png images, which allows for simple inclusion of LaTeX equations into 
 non-LaTeX document editors.
 
+ A command-line script for converting images to STL (no text yet) is included in the installation for those who do not
+want to write Python code directly.
+
 ## Requirements:
 - [Python](http://python.org/) 2.7 or higher (Python 3.x not yet tested, but would probably work)
 - [Numpy](http://www.numpy.org/) 1.7 or higher (for array manipulation)
-- [Scipy](http://www.scipy.org/) 0.12 or higher (for image reading and filtering functions)
+- [Scipy](http://www.scipy.org/) 0.12 or higher and [PIL](http://www.pythonware.com/products/pil/)(for image reading and filtering functions)
 - [Matplotlib](http://matplotlib.org/) 1.2.1 or higher (for rendering text and LaTeX to image data)
 
 ## Installation:
-Run `python setup.py build install` to install. This will check for the 3rd party
-dependencies above and install the library.
+Run `python setup.py build install` to install. 
+
+This will check for the 3rd party
+dependencies above and install the library. 
+
+This will also install the
+command line script `image2stl` into the `Python/Scripts` directory.
 
 ## Quickstart Examples:
 
-Run the file `examples.py` to produce a few sample STL files.
+Run the file `examples.py` to produce a few sample STL files from images included in `examples/example_data`.
 
 The first example converts the commonly-used [Lena test image](http://en.wikipedia.org/wiki/Lenna) to an STL file
 
 ```python
-from stl_tools import numpy2stl, text2png, text2array
+from stl_tools import numpy2stl
 
-from scipy.misc import imread
-from scipy.ndimage import median_filter
 from scipy.misc import lena, imresize
+from scipy.ndimage import gaussian_filter
 
 A = imresize(lena(), (256,256)) # load Lena image, shrink in half
 A = gaussian_filter(A, 1) # smoothing
 
 numpy2stl(A, "examples/Lena.stl", scale=0.1)
 ```
+
 Source image vs. output geometry:
 ![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
 
@@ -50,26 +61,44 @@ Source image vs. output geometry:
 
 ---
 
-The next two examples convert logos to STL, using color information to achieve appropriate 3D layering
+The next three examples convert logos to STL, using color information to achieve appropriate 3D layering
+
+Python code:
 
 ```python
+from scipy.misc import imread
+
 A = imread("examples/example_data/NASA.png")
-A = A[:,:,2] + 1.0*A[:,:,0] # Compose some elements from RGBA channels to give depth 
+A = A[:,:,2] + 1.0*A[:,:,0] # Compose elements from RGBA channels to give depth 
 A = gaussian_filter(A, 1) # smoothing
 
 numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val = 5.)
+```
+Equivalent command-line syntax:
+```bash
+> image2stl NASA.png -scale 0.05 -mask_val 5. -RGBA_weights 1. 0. 1. 0. -gaussian_filter 1
 ```
 
 ![Alt text](http://i.imgur.com/LFvw5Yn.png "Screenshot")
 [Click to view STL (view as wireframe)](examples/NASA.stl)
 
+---
+
+Python code:
+
 ```python
 A = imread("examples/example_data/openmdao.png")
-A =  A[:,:,0] + 1.*A[:,:,3] # Compose some elements from RGBA to give depth 
+A =  A[:,:,0] + 1.*A[:,:,3] # Compose elements from RGBA  channels to give depth 
 A = gaussian_filter(A, 2) # smoothing
 
 numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 1.)
 ```
+
+Equivalent command-line syntax:
+```bash
+> image2stl openmdao.png -scale 0.05 -mask_val 1. -RGBA_weights 1. 0. 0. 1. -gaussian_filter 2
+```
+
 Source image vs. output geometry:
 ![Alt text](http://i.imgur.com/70wFtCR.png "Screenshot")
 
@@ -83,7 +112,11 @@ Note that LaTeX expressions which coincidentally contain special ASCII markers (
 have to be escaped with an additional slash in those positions in order to be properly rendered, unless these
 markers are intended. 
 
+Python code:
+
 ```python
+from stl_tools import numpy2stl, text2png, text2array
+
 text = ("$\oint_{\Gamma} (A\, dx + B\, dy) = \iint_{U} \left(\\frac{\partial "
         "B}{\partial x} - \\frac{\partial A}{\partial y}\\right)\ dxdy$ \n\n "
         "$\\frac{\partial \\rho}{\partial t} + \\frac{\partial}{\partial x_j}"
@@ -104,7 +137,7 @@ Source image vs. output geometry:
 [Click to view STL (view as wireframe)](examples/Greens-Theorem_Navier-Stokes.stl)
 
 
-## Usage:
+## Library usage:
 There are 3 principal functions (no classes) to import and use from stl_tools:
 
 ### `stl_tools.numpy2stl`
@@ -145,6 +178,11 @@ The `scale` argument scales the height of the resulting geometry. It's a similai
 
 The `mask_val` argument allows you to set a threshold value for elements in the input array for exclusion in the STL file.
 Array elements which are less than this value will not be included as vertices.
+It takes a bit of trial-and-error to get these just right. Plotting the intermediate arrays
+with a colorbar (to show scaling) helps in finding decent values.
+
+The `max_width`, `max_height`, and `max_depth` values are measurements (in mm) used to scale the final output to 
+the largest size that can fit onto your 3D printer platform. Default values are for the MakerBot Replicator.
 
 
 ### `stl_tools.text2png`
@@ -177,10 +215,18 @@ However, it may be useful in it's own right. For example, it can be used alone t
 There may be a direct way to render the matplotlib figure as an array without using an intermediate file, but I could not seem to find a simple
 way in the matplotlib docs.
 
+## Command-line scripts
+
+### `image2stl`
+
+`image2stl` is a command-line script that is installed via entry points when `setup.py` is run.
+This provides a simple command-line interface to the functions of this library, with the same
+arguments. See the examples above for usage.
+
 ## Tips:
 
 - Consider scaling down a digital image before generating an STL from its pixels.
-For images of standard sizes for modern cameras, the resulting STL filesize can be quite large.
+For images of standard sizes for modern cameras, the resulting STL filesize can be pretty large.
 
 - Just like was shown in the examples, applying a simple filtering function to smooth
 sharp edges results in an STL geometry that is likely to be more easily printable. Fine tuning in a 
