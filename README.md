@@ -44,12 +44,9 @@ every 4 contiguous elements. The depth axis of any vertex is taken to be the val
 
 The `scale` argument scales the height of the resulting geometry. It's a similair effect to extruding or shrinking.
 
-Finally, the `mask_val` argument allows you to set a threshold value for elements in the input array for exclusion in the STL file.
+The `mask_val` argument allows you to set a threshold value for elements in the input array for exclusion in the STL file.
 Array elements which are less than this value will not be included as vertices.
 
-NOTE: the STL file produced does not have surface normals calculated for the defined facets (they are defaulted to the vector 0,0,0).
-It seems that in most applications, they are either not needed in the STL file, or are computed on the fly as needed. If someone has an application which
-requires these, let me know and I can compute & include them based on an optional argument.
 
 ### `text2png`
     text2png(text, fn = None)
