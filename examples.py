@@ -17,10 +17,10 @@ A = gaussian_filter(A, 2) #smoothing
 numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 1.)
 
 
-A = imread("examples/example_data/meatball.png")
+A = imread("examples/example_data/NASA.png")
 A = A[:,:,2] + 1.0*A[:,:,0] #Compose some elements from RGBA to give depth 
 A = gaussian_filter(A, .6) #smoothing
-numpy2stl(A, "examples/meatball.stl", scale=0.05, mask_val = 5.)
+numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val = 5.)
 
 
 text = ("$\oint_{\Gamma} (A\, dx + B\, dy) = \iint_{U} \left(\\frac{\partial "

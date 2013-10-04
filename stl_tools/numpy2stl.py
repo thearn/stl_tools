@@ -78,7 +78,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val = -np.inf, ascii=False,
     Returns: (None)
     """
     m, n = A.shape
-    if n > m:
+    if n >= m:
         A = np.rot90(A, k=3)
         m, n = n, m
     A = scale * (A - A.min())
