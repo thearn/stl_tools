@@ -14,9 +14,9 @@ numpy2stl(A, "examples/Lena.stl", scale=0.25)
 A = imread("examples/example_data/openmdao.png")
 A =  A[:,:,0] + 1.*A[:,:,3] #Compose some elements from RGBA to give desired depth 
 A = median_filter(A, size=(3,3)) #smoothing
-numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 5.)
+numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 1.)
 
-
+quit()
 A = imread("examples/example_data/nasa.png")
 A = A[:,:,2] + 1.0*A[:,:,0] #Compose some elements from RGBA to give desired depth 
 A = median_filter(A, size=(4,4)) #smoothing
