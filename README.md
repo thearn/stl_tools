@@ -1,3 +1,5 @@
+![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
+
 stl_tools
 =======================
 Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).
