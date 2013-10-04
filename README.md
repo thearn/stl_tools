@@ -5,8 +5,8 @@ stl_tools
 Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).
 
 This allows for rapid 3D printing of text, rendered equations, or simple digital images.
-Use them for product prototyping, art, cookie cutters, chocolate molds, (see [this](http://www.makerbot.com/tutorials/making-chocolate-molds/) 
-to learn how to make a printed object food-safe) or whatever you can think of.
+Use them for product prototyping, art, cookie cutters, ice cube trays, chocolate molds, (see [this](http://www.makerbot.com/tutorials/making-chocolate-molds/) 
+to learn how to make a printed object food-safe) or whatever else you can think of.
 
 Besides printing, these can also be merged into other 3D meshes for many other 
 possible uses, using programs such as Blender.
@@ -38,11 +38,12 @@ from scipy.misc import imread
 from scipy.ndimage import median_filter
 from scipy.misc import lena, imresize
 
-A = imresize(lena(), (256,256)) # shrink image in half
+A = imresize(lena(), (256,256)) # load Lena image, shrink in half
 A = gaussian_filter(A, 1) # smoothing
 
 numpy2stl(A, "examples/Lena.stl", scale=0.1)
 ```
+Source image vs. output geometry:
 ![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
 
 [Click to view STL (view as wireframe)](examples/Lena.stl)
@@ -69,7 +70,8 @@ A = gaussian_filter(A, 2) # smoothing
 
 numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 1.)
 ```
-![Alt text](http://i.imgur.com/zb4LTri.png "Screenshot")
+Source image vs. output geometry:
+![Alt text](http://i.imgur.com/70wFtCR.png "Screenshot")
 
 [Click to view STL (view as wireframe)](examples/OpenMDAO-logo.stl)
 
@@ -95,6 +97,7 @@ A = gaussian_filter(A.max() - A, 1.)
 numpy2stl(A, "examples/Greens-Theorem_Navier-Stokes.stl", scale=0.2, 
                                                          mask_val = 5.)
 ```
+Source image vs. output geometry:
 ![Alt text](examples/Greens-Theorem_Navier-Stokes.png "Screenshot")
 ![Alt text](http://i.imgur.com/TgHlFGK.png "Screenshot")
 
@@ -177,11 +180,21 @@ way in the matplotlib docs.
 ## Tips:
 
 - Consider scaling down a digital image before generating an STL from its pixels.
-For images of standard sizes for modern cameras, the resulting STL can be quite large.
+For images of standard sizes for modern cameras, the resulting STL filesize can be quite large.
 
 - Just like was shown in the examples, applying a simple filtering function to smooth
 sharp edges results in an STL geometry that is likely to be more easily printable. Fine tuning in a 
 program like Photoshop or Gimp can also help prevent spikes/jagged edges in the geometry.
+
+- To make a proper mold, scale up the edges of the source image to match the maximum pixel value of the image (or higher), to form a lip. 
+For example:
+```python
+m, n = A.shape
+border_val = 1.1 * A.max()
+A[0::m-1, :] = border_val # make top and bottom lip
+A[:, 0::n-1] = border_val # make left and right lip
+```
+In practice, the border may need to be thicker than 1 pixel.
 
 ## Todo/future features:
 
