@@ -1,10 +1,5 @@
 ![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
-```python
-from stl_tools import numpy2stl
-A = scipy.misc.lena()
-numpy2stl(A, "examples/Lena.stl", scale=0.1)
 
-```
 stl_tools
 =======================
 Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).
@@ -48,7 +43,7 @@ A = gaussian_filter(A, 1) # smoothing
 
 numpy2stl(A, "examples/Lena.stl", scale=0.1)
 ```
-[Click to view source image](examples/example_data/Lena.png)
+![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
 
 [Click to view STL (view as wireframe)](examples/Lena.stl)
 
@@ -63,7 +58,7 @@ A = gaussian_filter(A, 1) # smoothing
 
 numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val = 5.)
 ```
-[Click to view source image](examples/example_data/NASA.png)
+
 
 [Click to view STL (view as wireframe)](examples/NASA.stl)
 
@@ -74,7 +69,7 @@ A = gaussian_filter(A, 2) # smoothing
 
 numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 1.)
 ```
-[Click to view source image](examples/example_data/openmdao.png)
+![Alt text](http://i.imgur.com/zb4LTri.png "Screenshot")
 
 [Click to view STL (view as wireframe)](examples/OpenMDAO-logo.stl)
 
@@ -100,7 +95,8 @@ A = gaussian_filter(A.max() - A, 1.)
 numpy2stl(A, "examples/Greens-Theorem_Navier-Stokes.stl", scale=0.2, 
                                                          mask_val = 5.)
 ```
-[Click to view rendered PNG](examples/Greens-Theorem_Navier-Stokes.png)
+![Alt text](examples/Greens-Theorem_Navier-Stokes.png "Screenshot")
+![Alt text](http://i.imgur.com/TgHlFGK.png "Screenshot")
 
 [Click to view STL (view as wireframe)](examples/Greens-Theorem_Navier-Stokes.stl)
 
