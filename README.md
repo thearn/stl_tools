@@ -1,5 +1,10 @@
 ![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
+```python
+from stl_tools import numpy2stl
+A = scipy.misc.lena()
+numpy2stl(A, "examples/Lena.stl", scale=0.1)
 
+```
 stl_tools
 =======================
 Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).
