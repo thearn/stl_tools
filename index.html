@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Stl tools : Python code to produce STL geometry files from plain text, LaTeX code, and 2D numerical arrays (matrices) " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Stl tools</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/thearn/stl_tools">View on GitHub</a>
+
+          <h1 id="project_title">Stl tools</h1>
+          <h2 id="project_tagline">Python code to produce STL geometry files from plain text, LaTeX code, and 2D numerical arrays (matrices) </h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/thearn/stl_tools/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/thearn/stl_tools/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><img src="http://i.imgur.com/CdZzhBp.png" alt="Alt text" title="Screenshot"></p>
+
+<h1>
+<a name="stl_tools" class="anchor" href="#stl_tools"><span class="octicon octicon-link"></span></a>stl_tools</h1>
+
+<p>Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).</p>
+
+<p>This allows for rapid 3D printing of text, rendered equations, or simple digital images.
+Use them for product prototyping, art, cookie cutters, ice cube trays, chocolate molds, (see <a href="http://www.makerbot.com/tutorials/making-chocolate-molds/">this</a> 
+to learn how to make a printed object food-safe) or whatever else you can think of.</p>
+
+<p>Some modification may be needed to the STL or printer settings to get certain shapes to print cleanly (ie. thicker base, 
+support structures, etc).</p>
+
+<p>Besides printing, these can also be merged into other 3D meshes for many other 
+possible uses, using programs such as Blender.</p>
+
+<p>Also included is a function that can convert raw LaTeX expressions to high
+quality .png images, which allows for simple inclusion of LaTeX equations into 
+non-LaTeX document editors.</p>
+
+<p>A command-line script for converting images to STL (no text yet) is included in the installation for those who do not
+want to write Python code directly.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements:</h2>
+
+<ul>
+<li>
+<a href="http://python.org/">Python</a> 2.7 or higher (Python 3.x not yet tested, but would probably work)</li>
+<li>
+<a href="http://www.numpy.org/">Numpy</a> 1.7 or higher (for array manipulation)</li>
+<li>
+<a href="http://www.scipy.org/">Scipy</a> 0.12 or higher (for image reading and filtering functions)</li>
+<li>
+<a href="http://matplotlib.org/">Matplotlib</a> 1.2.1 or higher (for rendering text and LaTeX to image data)</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation:</h2>
+
+<p>Run <code>python setup.py build install</code> to install. </p>
+
+<p>This will check for the 3rd party
+dependencies above and install the library. </p>
+
+<p>This will also install the
+command line script <code>image2stl</code> into the <code>Python/Scripts</code> directory.</p>
+
+<h2>
+<a name="quickstart-examples" class="anchor" href="#quickstart-examples"><span class="octicon octicon-link"></span></a>Quickstart Examples:</h2>
+
+<p>Run the file <code>examples.py</code> to produce a few sample STL files from images included in <code>examples/example_data</code>.</p>
+
+<p>The first example converts the commonly-used <a href="http://en.wikipedia.org/wiki/Lenna">Lena test image</a> to an STL file</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">stl_tools</span> <span class="kn">import</span> <span class="n">numpy2stl</span>
+
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="kn">import</span> <span class="n">lena</span><span class="p">,</span> <span class="n">imresize</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">imresize</span><span class="p">(</span><span class="n">lena</span><span class="p">(),</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">))</span> <span class="c"># load Lena image, shrink in half</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c"># smoothing</span>
+
+<span class="n">numpy2stl</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s">"examples/Lena.stl"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+<p>Source image vs. output geometry:
+<img src="http://i.imgur.com/CdZzhBp.png" alt="Alt text" title="Screenshot"></p>
+
+<p><a href="examples/Lena.stl">Click to view STL (view as wireframe)</a></p>
+
+<hr><p>The next three examples convert logos to STL, using color information to achieve appropriate 3D layering</p>
+
+<p>Python code:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="kn">import</span> <span class="n">imread</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s">"examples/example_data/NASA.png"</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">A</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="c"># Compose elements from RGBA channels to give depth </span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c"># smoothing</span>
+
+<span class="n">numpy2stl</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s">"examples/NASA.stl"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">mask_val</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span>
+</pre></div>
+
+<p>Equivalent command-line syntax:</p>
+
+<div class="highlight highlight-bash"><pre>&gt; image2stl NASA.png -scale 0.05 -mask_val 5. -RGBA_weights 1. 0. 1. 0. -gaussian_filter 1
+</pre></div>
+
+<p><img src="http://i.imgur.com/LFvw5Yn.png" alt="Alt text" title="Screenshot"><a href="examples/NASA.stl">Click to view STL (view as wireframe)</a></p>
+
+<hr><p>Python code:</p>
+
+<div class="highlight highlight-python"><pre><span class="n">A</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s">"examples/example_data/openmdao.png"</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span>  <span class="n">A</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span><span class="o">*</span><span class="n">A</span><span class="p">[:,:,</span><span class="mi">3</span><span class="p">]</span> <span class="c"># Compose elements from RGBA  channels to give depth </span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c"># smoothing</span>
+
+<span class="n">numpy2stl</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s">"examples/OpenMDAO-logo.stl"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">mask_val</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+
+<p>Equivalent command-line syntax:</p>
+
+<div class="highlight highlight-bash"><pre>&gt; image2stl openmdao.png -scale 0.05 -mask_val 1. -RGBA_weights 1. 0. 0. 1. -gaussian_filter 2
+</pre></div>
+
+<p>Source image vs. output geometry:
+<img src="http://i.imgur.com/70wFtCR.png" alt="Alt text" title="Screenshot"></p>
+
+<p><a href="examples/OpenMDAO-logo.stl">Click to view STL (view as wireframe)</a></p>
+
+<hr><p>Finally, this example renders a LaTeX expression into a png image, then converts this image to an STL.</p>
+
+<p>Note that LaTeX expressions which coincidentally contain special ASCII markers (such as <code>\n</code> and <code>\r</code>) 
+have to be escaped with an additional slash in those positions in order to be properly rendered, unless these
+markers are intended. </p>
+
+<p>Python code:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">stl_tools</span> <span class="kn">import</span> <span class="n">numpy2stl</span><span class="p">,</span> <span class="n">text2png</span><span class="p">,</span> <span class="n">text2array</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="s">"$\oint_{\Gamma} (A\, dx + B\, dy) = \iint_{U} \left(</span><span class="se">\\</span><span class="s">frac{\partial "</span>
+        <span class="s">"B}{\partial x} - </span><span class="se">\\</span><span class="s">frac{\partial A}{\partial y}</span><span class="se">\\</span><span class="s">right)\ dxdy$ </span><span class="se">\n\n</span><span class="s"> "</span>
+        <span class="s">"$</span><span class="se">\\</span><span class="s">frac{\partial </span><span class="se">\\</span><span class="s">rho}{\partial t} + </span><span class="se">\\</span><span class="s">frac{\partial}{\partial x_j}"</span>
+        <span class="s">"\left[ </span><span class="se">\\</span><span class="s">rho u_j </span><span class="se">\\</span><span class="s">right] = 0$"</span><span class="p">)</span>
+<span class="n">text2png</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s">"examples/Greens-Theorem_Navier-Stokes"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span> <span class="c">#save png </span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s">"examples/Greens-Theorem_Navier-Stokes.png"</span><span class="p">)</span> <span class="c"># read from rendered png</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c">#grayscale projection</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">A</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span> 
+
+<span class="n">numpy2stl</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s">"examples/Greens-Theorem_Navier-Stokes.stl"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> 
+                                                         <span class="n">mask_val</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span>
+</pre></div>
+
+<p>Source image vs. output geometry:
+<img src="examples/Greens-Theorem_Navier-Stokes.png" alt="Alt text" title="Screenshot"><img src="http://i.imgur.com/TgHlFGK.png" alt="Alt text" title="Screenshot"></p>
+
+<p><a href="examples/Greens-Theorem_Navier-Stokes.stl">Click to view STL (view as wireframe)</a></p>
+
+<h2>
+<a name="library-usage" class="anchor" href="#library-usage"><span class="octicon octicon-link"></span></a>Library usage:</h2>
+
+<p>There are 3 principal functions (no classes) to import and use from stl_tools:</p>
+
+<h3>
+<a name="stl_toolsnumpy2stl" class="anchor" href="#stl_toolsnumpy2stl"><span class="octicon octicon-link"></span></a><code>stl_tools.numpy2stl</code>
+</h3>
+
+<pre><code>numpy2stl(A, fn, scale=0.1, mask_val = -np.inf, ascii=False, calc_normals=False)
+Reads a numpy array, and outputs an STL file
+
+Inputs:
+ A (ndarray) -  an 'm' by 'n' 2D numpy array
+ fn (string) -  filename to use for STL file
+
+Optional input:
+ scale (float)  -  scales the height (surface) of the 
+                   resulting STL mesh. Tune to match needs
+
+ mask_val (float) - any element of the inputted array that is less
+                    than this value will not be included in the mesh.
+                    default renders all vertices (x &gt; -inf for all float x)
+
+ ascii (bool)  -  sets the STL format to ascii or binary (default)
+
+ calc_normals (bool) - sets whether surface normals are calculated or not
+
+ max_width, max_depth, max_height (floats) - maximum size of the stl
+                                            object (in mm). Match this to
+                                            the dimensions of a 3D printer platform 
+
+Returns: (None)
+</code></pre>
+
+<p><code>numpy2stl()</code> is the main function of this repository. </p>
+
+<p>It takes a 2D numpy array and output filename
+as input, and writes an STL file. </p>
+
+<p>Each element of the array is tesselated to its neighbors to produce 2 triangular faces for
+every 4 contiguous elements. The depth axis of any vertex is taken to be the value of the array corresponding to that point.</p>
+
+<p>The <code>scale</code> argument scales the height of the resulting geometry. It's a similair effect to extruding or shrinking.</p>
+
+<p>The <code>mask_val</code> argument allows you to set a threshold value for elements in the input array for exclusion in the STL file.
+Array elements which are less than this value will not be included as vertices.
+It takes a bit of trial-and-error to get these just right. Plotting the intermediate arrays
+with a colorbar (to show scaling) helps in finding decent values.</p>
+
+<p>The <code>max_width</code>, <code>max_height</code>, and <code>max_depth</code> values are measurements (in mm) used to scale the final output to 
+the largest size that can fit onto your 3D printer platform. Default values are for the MakerBot Replicator.</p>
+
+<h3>
+<a name="stl_toolstext2png" class="anchor" href="#stl_toolstext2png"><span class="octicon octicon-link"></span></a><code>stl_tools.text2png</code>
+</h3>
+
+<pre><code>text2png(text, fn = None)
+Renders inputted text to a png image using matplotlib.
+
+Inputs:
+ text (string) -  text to render
+
+Optional input:
+ fn (string)  -  filename of png to be outputted.
+                 defaults to the entered text
+
+Returns: (None)
+</code></pre>
+
+<p><code>text2png()</code> was written as an intermediate helper function to render text to pngs, to then be imported, filtered, and meshed.
+However, it may be useful in it's own right. For example, it can be used alone to render LaTeX expressions into images, to be imported into WYSIWYG document editors like MS Word or LibreOffice Writer. </p>
+
+<h3>
+<a name="stl_toolstext2array" class="anchor" href="#stl_toolstext2array"><span class="octicon octicon-link"></span></a><code>stl_tools.text2array</code>
+</h3>
+
+<pre><code>text2array(text)
+Renders inputted text, and returns array representation.
+
+Inputs:
+ text (string) -  text to render
+
+Returns: A (ndarray) - 2D numpy array of rendered text
+</code></pre>
+
+<p><code>text2array()</code> renders inputted text using <code>text2png()</code>, but imports the resulting png as an ndarray and deletes the intermediate file.
+There may be a direct way to render the matplotlib figure as an array without using an intermediate file, but I could not seem to find a simple
+way in the matplotlib docs.</p>
+
+<h2>
+<a name="command-line-scripts" class="anchor" href="#command-line-scripts"><span class="octicon octicon-link"></span></a>Command-line scripts</h2>
+
+<h3>
+<a name="image2stl" class="anchor" href="#image2stl"><span class="octicon octicon-link"></span></a><code>image2stl</code>
+</h3>
+
+<p><code>image2stl</code> is a command-line script that is installed via entry points when <code>setup.py</code> is run.
+This provides a simple command-line interface to the functions of this library, with the same
+arguments. See the examples above for usage.</p>
+
+<h2>
+<a name="tips" class="anchor" href="#tips"><span class="octicon octicon-link"></span></a>Tips:</h2>
+
+<ul>
+<li><p>Consider scaling down a digital image before generating an STL from its pixels.
+For images of standard sizes for modern cameras, the resulting STL filesize can be pretty large.</p></li>
+<li><p>Just like was shown in the examples, applying a simple filtering function to smooth
+sharp edges results in an STL geometry that is likely to be more easily printable. Fine tuning in a 
+program like Photoshop or Gimp can also help prevent spikes/jagged edges in the geometry. Contrast
+equalization or other types of filters may also be helpful (haven't tried yet).</p></li>
+<li>
+<p>To make a proper mold, scale up the edges of the source image to match the maximum pixel value of the image (or higher), to form a lip. 
+For example:</p>
+
+<div class="highlight highlight-python"><pre><span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">border_val</span> <span class="o">=</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">A</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">border_val</span> <span class="c"># make top and bottom lip</span>
+<span class="n">A</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">border_val</span> <span class="c"># make left and right lip</span>
+</pre></div>
+
+<p>In practice, the border may need to be thicker than 1 pixel.</p>
+</li>
+</ul><h2>
+<a name="todofuture-features" class="anchor" href="#todofuture-features"><span class="octicon octicon-link"></span></a>Todo/future features:</h2>
+
+<ul>
+<li><p>Photos of actual printed models. </p></li>
+<li><p>I'm looking into writing a utility function to refine STL meshes by removing redundant vertices (so that wide flat spaces aren't packed with dense tessellations)</p></li>
+<li><p>It's possible to apply various warping functions to the resulting 
+meshes. So you could load an image, warp the result into a cylinder, and have a 
+textured column (or something like that).</p></li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Stl tools maintained by <a href="https://github.com/thearn">thearn</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
