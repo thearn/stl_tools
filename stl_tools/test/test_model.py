@@ -3,7 +3,7 @@ import os
 import unittest
 
 import numpy as np
-from scipy.misc import imread
+from scipy.misc import imread, imresize
 from stl_tools import text2array, numpy2stl
 
 
@@ -21,7 +21,9 @@ class TestSTL(unittest.TestCase):
         Covers the text2png and text2array functions.
         """
 
-        A = text2array("TEST", fontsize=50)[:, :, 0]
+        A = text2array("TEST", fontsize=1000)[:, :, 0]
+        A = imresize(A, (100, 100))
+        #np.savetxt("TEST.csv", A, delimiter=',')
         B = np.loadtxt("TEST.csv", delimiter=',')
         r = np.linalg.norm(A - B) / np.linalg.norm(B)
         self.assertAlmostEqual(r, 0.0)
