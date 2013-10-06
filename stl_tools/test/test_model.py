@@ -34,6 +34,7 @@ class TestSTL(unittest.TestCase):
         """
         # test ascii output
         A = imread("TEST.png")
+
         numpy2stl(A, "OUT_.stl", scale=0.05, mask_val=6., ascii=True)
         reference = open("TEST_ascii.stl", 'rb')
         new = open("OUT_.stl", 'rb')
