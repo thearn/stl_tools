@@ -1,6 +1,7 @@
-from scipy.misc import lena, imresize, imread
+from scipy.misc import lena, imresize
+from pylab import imread
 from scipy.ndimage import gaussian_filter
-from stl_tools import numpy2stl, text2png, text2array
+from stl_tools import numpy2stl, text2png
 
 
 """
@@ -16,13 +17,13 @@ A = imresize(lena(), (256, 256))
 A = gaussian_filter(A, 1)  # smoothing
 numpy2stl(A, "examples/Lena.stl", scale=0.1)
 
-A = imread("examples/example_data/NASA.png")
-A = A[:, :, 2] + 1.0*A[:,:, 0] # Compose RGBA channels to give depth 
+A = 256 * imread("examples/example_data/NASA.png")
+A = A[:,:, 2] + 1.0*A[:,:, 0] # Compose RGBA channels to give depth
 A = gaussian_filter(A, 1)  # smoothing
 numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val=5.)
 
-A = imread("examples/example_data/openmdao.png")
-A =  A[:, :, 0] + 1.*A[:,:, 3] # Compose some elements from RGBA to give depth 
+A = 256 * imread("examples/example_data/openmdao.png")
+A =  A[:,:, 0] + 1.*A[:,:, 3] # Compose some elements from RGBA to give depth
 A = gaussian_filter(A, 2)  # smoothing
 numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val=1.)
 
@@ -33,7 +34,7 @@ text = ("$\oint_{\Gamma} (A\, dx + B\, dy) = \iint_{U} \left(\\frac{\partial "
 # save png
 text2png(text, "examples/Greens-Theorem_Navier-Stokes", fontsize=50)
 # read from rendered png
-A = imread("examples/Greens-Theorem_Navier-Stokes.png")
+A = 256 * imread("examples/Greens-Theorem_Navier-Stokes.png")
 A = A.mean(axis=2)  # grayscale projection
 A = gaussian_filter(A.max() - A, 1.0)
 numpy2stl(A, "examples/Greens-Theorem_Navier-Stokes.stl", scale=0.2,

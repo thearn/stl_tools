@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 
 import numpy as np
 from numpy2stl import numpy2stl
-from scipy.misc import imread
+from pylab import imread
 from scipy.ndimage import gaussian_filter
 
 
@@ -32,8 +32,10 @@ def image2stl():
 
     args = vars(parser.parse_args())
 
-    f_args = {f_arg: float(args[f_arg]) for f_arg in _float_args if args[f_arg]}
-    b_args = {b_arg: bool(int(args[b_arg])) for b_arg in _bool_args if args[b_arg]}
+    f_args = {f_arg: float(args[f_arg])
+              for f_arg in _float_args if args[f_arg]}
+    b_args = {b_arg: bool(int(args[b_arg]))
+              for b_arg in _bool_args if args[b_arg]}
 
     kwargs = dict(f_args, **b_args)
 
@@ -42,7 +44,7 @@ def image2stl():
     if not fn:
         fn = '.'.join([src.split('.')[0], "stl"])
 
-    A = imread(src)
+    A = 256. * imread(src)
     L = len(A.shape)
     w = args['RGBA_weights']
     if L > 2:
