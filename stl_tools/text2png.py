@@ -1,7 +1,5 @@
 import os
-
 import pylab
-from scipy.misc import imread
 
 
 def text2png(text, fn=None, fontsize=100):
@@ -44,7 +42,7 @@ def text2array(text, fontsize=100):
     """
 
     text2png(text, fn="_text", fontsize=fontsize)
-    A = imread("_text.png")
+    A = pylab.imread("_text.png")[:,:,:3].mean(axis=2)
     os.remove("_text.png")
     return A.max() - A
 

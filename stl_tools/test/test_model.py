@@ -3,7 +3,7 @@ import os
 import unittest
 
 import numpy as np
-from scipy.misc import imread, imresize
+from scipy.misc import imresize
 from stl_tools import text2array, numpy2stl
 
 
@@ -21,7 +21,7 @@ class TestSTL(unittest.TestCase):
         Covers the text2png and text2array functions.
         """
 
-        A = text2array("TEST", fontsize=1000)[:, :, 0]
+        A = text2array("TEST", fontsize=1000)
         A = imresize(A, (100, 100))
         #np.savetxt("TEST.csv", A, delimiter=',')
         B = np.loadtxt("TEST.csv", delimiter=',')
@@ -32,10 +32,10 @@ class TestSTL(unittest.TestCase):
         """ Tests creation of an STL from a PNG.
         Covers the text2array function.
         """
-        # test ascii output
-        A = imread("TEST.png")
 
-        numpy2stl(A, "OUT_.stl", scale=0.05, mask_val=6., ascii=True)
+        # test ascii output
+        A = imresize([[0, 1], [1, 0]], (64, 64))
+        numpy2stl(A, "OUT_.stl", scale=0.05, mask_val=3., ascii=True)
         reference = open("TEST_ascii.stl", 'rb')
         new = open("OUT_.stl", 'rb')
         newlines = new.readlines()
