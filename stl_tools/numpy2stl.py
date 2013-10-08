@@ -89,7 +89,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
     A = scale * (A - A.min())
 
     facets = []
-    for i, k in product(xrange(m - 1), xrange(n - 1)):
+    for i, k in product(range(m - 1), range(n - 1)):
 
         this_pt = np.array([i - m / 2., k - n / 2., A[i, k]])
         top_right = np.array([i - m / 2., k + 1 - n / 2., A[i, k + 1]])
@@ -132,8 +132,3 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
         facets = facets * float(max_height) / zsize
 
     writeSTL(facets, fn, ascii=ascii)
-
-if __name__ == "__main__":
-    from scipy.misc import lena
-    A = lena()
-    numpy2stl(A, "lena.stl")

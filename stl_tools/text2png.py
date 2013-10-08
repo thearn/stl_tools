@@ -42,12 +42,6 @@ def text2array(text, fontsize=100):
     """
 
     text2png(text, fn="_text", fontsize=fontsize)
-    A = pylab.imread("_text.png")[:,:,:3].mean(axis=2)
+    A = pylab.imread("_text.png")[:, :, :3].mean(axis=2)
     os.remove("_text.png")
     return A.max() - A
-
-if __name__ == "__main__":
-    # LaTeX for Navier-Stokes equation
-    text = ("$\\frac{\partial \\rho}{\partial t} + \\frac{\partial}{\partial "
-            "x_j}\left[ \\rho u_j \\right] = 0$")
-    text2png(text, "NavierStokes")

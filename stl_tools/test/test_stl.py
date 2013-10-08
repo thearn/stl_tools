@@ -4,7 +4,7 @@ import unittest
 import os
 import numpy as np
 from scipy.misc import imresize
-from stl_tools import text2array, numpy2stl
+from stl_tools import text2array, numpy2stl, text2png
 from qimshow import qimshow
 
 """
@@ -16,7 +16,16 @@ logging.basicConfig(level=logging.DEBUG)
 
 class TestSTL(unittest.TestCase):
 
-    def test_text(self):
+    def test_text2png(self):
+        """ Tests creation of an image array from a text expression.
+        Covers the text2png and text2array functions.
+        """
+
+        text2png("TEST", fontsize=1000)
+        assert os.path.exists("TEST.png")
+        os.remove("TEST.png")
+
+    def test_text2array(self):
         """ Tests creation of an image array from a text expression.
         Covers the text2png and text2array functions.
         """
@@ -36,8 +45,15 @@ class TestSTL(unittest.TestCase):
         assert os.stat(output_name).st_size > 1500000
 
         # test binary output
-        A = imresize([[0, 1], [1, 0]], (64, 64))
         numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=False)
+        assert os.path.exists(output_name)
+        assert os.stat(output_name).st_size > 200000
+        os.remove(output_name)
+
+    def test_calc_normals(self):
+        output_name = "OUT_.stl"
+        A = imresize([[0, 1], [1, 0]], (64, 64))
+        numpy2stl(A, output_name, scale=0.05, mask_val=3., calc_normals=True)
         assert os.path.exists(output_name)
         assert os.stat(output_name).st_size > 200000
         os.remove(output_name)
