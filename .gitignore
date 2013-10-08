@@ -4,3 +4,4 @@
 *.x3g
 /build
 *egg-info
+.coverage

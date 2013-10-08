@@ -28,18 +28,19 @@ class TestSTL(unittest.TestCase):
         """ Tests creation of an STL from a PNG.
         Covers the text2array function.
         """
-
+        output_name = "OUT_.stl"
         # test ascii output
         A = imresize([[0, 1], [1, 0]], (64, 64))
-        numpy2stl(A, "OUT_.stl", scale=0.05, mask_val=3., ascii=True)
-        os.path.exists("OUT_.stl")
+        numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=True)
+        assert os.path.exists(output_name)
+        assert os.stat(output_name).st_size > 1500000
 
         # test binary output
         A = imresize([[0, 1], [1, 0]], (64, 64))
-        numpy2stl(A, "OUT_.stl", scale=0.05, mask_val=3., ascii=False)
-        os.path.exists("OUT_.stl")
-
-        os.remove("OUT_.stl")
+        numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=False)
+        assert os.path.exists(output_name)
+        assert os.stat(output_name).st_size > 200000
+        os.remove(output_name)
 
 if __name__ == '__main__':
     unittest.main()

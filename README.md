@@ -36,7 +36,7 @@ dependencies above and install the library.
 This will also install the
 command line script `image2stl` into the `Python/Scripts` directory.
 
-Automatic tests can be perfomed by running `stl_tools/test/test_model.py` from within the test directory.
+Automatic tests can be perfomed by running `stl_tools/test/test_stl.py`.
 
 ## Quickstart Examples:
 

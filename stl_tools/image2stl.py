@@ -50,7 +50,7 @@ def image2stl():
     if L > 2:
         if len(w) >= L:
             A = np.sum([float(w[i]) * A[:, :, i]
-                       for i in xrange(A.shape[-1])], axis=0)
+                       for i in range(A.shape[-1])], axis=0)
         else:
             A = A.mean(axis=2)
 
