@@ -24,7 +24,7 @@ non-LaTeX document editors.
 want to write Python code directly.
 
 ## Requirements:
-- [Python](http://python.org/) 2.7 or higher (Python 3.x not yet tested, but would probably work)
+- [Python](http://python.org/) 2.7+ or 3.2+
 - [Numpy](http://www.numpy.org/) 1.7 or higher (for array manipulation)
 - [Scipy](http://www.scipy.org/) 0.12 or higher (for resizing and filtering functions)
 - [Matplotlib](http://matplotlib.org/) 1.2.1 or higher (for rendering text and LaTeX to image data)
