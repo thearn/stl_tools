@@ -10,7 +10,7 @@ This allows for rapid 3D printing of text, rendered equations, or simple digital
 Use them for product prototyping, art, cookie cutters, ice cube trays, chocolate molds, (see [this](http://www.makerbot.com/tutorials/making-chocolate-molds/)
 to learn how to make a printed object food-safe) or whatever else you can think of.
 
-Some modification may be needed to the STL or printer settings to get certain shapes to print cleanly (ie. thicker base,
+Some modification may be needed to the STL or printer settings to get certain shapes to print cleanly (i.e. thicker base,
 support structures, etc).
 
 Besides printing, these can also be merged into other 3D meshes for many other
@@ -30,16 +30,22 @@ want to write Python code directly.
 - [Matplotlib](http://matplotlib.org/) 1.2.1 or higher (for rendering text and LaTeX to image data)
 
 ## Installation:
+There are two ways to install `stl_tools`.
 
+It's recommended that you install Numpy, Scipy, and Matplotlib first, either
+using binary installers (windows) or using a package manager (`apt-get`,
+`homebrew`), etc.
+
+### Installing straight from `PyPI`:
+Run `pip install stl_tools`.
+
+### Installing from Source:
 Run `python setup.py build install` to install.
 
-This will check for the 3rd party
-dependencies above and install the library.
-
-This will also install the
+Either method will also install the
 command line script `image2stl` into the `Python/Scripts` directory.
 
-Automatic tests can be perfomed by running `stl_tools/test/test_stl.py`.
+Automatic tests can be performed by running `stl_tools/test/test_stl.py`.
 
 ## Quickstart Examples:
 
@@ -175,10 +181,10 @@ There are 3 principal functions (no classes) to import and use from stl_tools:
 It takes a 2D numpy array and output filename
 as input, and writes an STL file.
 
-Each element of the array is tesselated to its neighbors to produce 2 triangular faces for
+Each element of the array is tessellated to its neighbors to produce 2 triangular faces for
 every 4 contiguous elements. The depth axis of any vertex is taken to be the value of the array corresponding to that point.
 
-The `scale` argument scales the height of the resulting geometry. It's a similair effect to extruding or shrinking.
+The `scale` argument scales the height of the resulting geometry. It's a similar effect to extruding or shrinking.
 
 The `mask_val` argument allows you to set a threshold value for elements in the input array for exclusion in the STL file.
 Array elements which are less than this value will not be included as vertices.
@@ -230,7 +236,7 @@ arguments. See the examples above for usage.
 ## Tips:
 
 - Consider scaling down a digital image before generating an STL from its pixels.
-For images of standard sizes for modern cameras, the resulting STL filesize can be pretty large.
+For images of standard sizes for modern cameras, the resulting STL file size can be pretty large.
 
 - Just like was shown in the examples, applying a simple filtering function to smooth
 sharp edges results in an STL geometry that is likely to be more easily printable. Fine tuning in a
