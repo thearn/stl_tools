@@ -3,5 +3,6 @@
 *.pyc
 *.x3g
 /build
+/dist
 *egg-info
 .coverage

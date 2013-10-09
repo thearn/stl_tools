@@ -2,7 +2,7 @@
 # travis-ci.org definition for stl_tools build
 #
 
-language: erlang
+language: c
 env:
     - PYTHON=python PYSUF='' PYVER=2.7
     - PYTHON=python3 PYSUF='3' PYVER=3.2
