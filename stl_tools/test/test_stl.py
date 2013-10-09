@@ -3,7 +3,6 @@ import os
 import unittest
 import os
 import numpy as np
-from scipy.misc import imresize
 from stl_tools import text2array, numpy2stl, text2png
 
 """
@@ -38,23 +37,23 @@ class TestSTL(unittest.TestCase):
         """
         output_name = "OUT_.stl"
         # test ascii output
-        A = imresize([[0, 1], [1, 0]], (64, 64))
+        A = 100*np.random.randn(64, 64)
         numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=True)
         assert os.path.exists(output_name)
-        assert os.stat(output_name).st_size > 1500000
+        assert os.stat(output_name).st_size > 1e5
 
         # test binary output
-        numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=False)
+        numpy2stl(A, output_name, scale=0.05, mask_val=3.)
         assert os.path.exists(output_name)
-        assert os.stat(output_name).st_size > 200000
+        assert os.stat(output_name).st_size > 1e5
         os.remove(output_name)
 
     def test_calc_normals(self):
         output_name = "OUT_.stl"
-        A = imresize([[0, 1], [1, 0]], (64, 64))
+        A = 100*np.random.randn(64, 64)
         numpy2stl(A, output_name, scale=0.05, mask_val=3., calc_normals=True)
         assert os.path.exists(output_name)
-        assert os.stat(output_name).st_size > 200000
+        assert os.stat(output_name).st_size > 1e5
         os.remove(output_name)
 
 if __name__ == '__main__':
