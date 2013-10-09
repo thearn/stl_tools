@@ -43,10 +43,12 @@ def writeSTL(facets, file_name, ascii=False):
     f = open(file_name, 'wb')
     if ascii:
         lines = _build_ascii_stl(facets)
-        f.write("\n".join(lines))
+        lines_ = "\n".join(lines).encode("UTF-8")
+        f.write(lines_)
     else:
         data = _build_binary_stl(facets)
-        f.write("".join(data))
+        data = b"".join(data)
+        f.write(data)
 
     f.close()
 
