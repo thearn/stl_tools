@@ -2,21 +2,20 @@
 # travis-ci.org definition for stl_tools build
 #
 
-language: python
-env:
-    - PYTHON=python PYSUF='' PYVER=2.7
-    - PYTHON=python3 PYSUF='3' PYVER=3.2
+language: erlang
 python:
   - "2.7"
-  - "3.2"
 # command to install dependencies
 install:
-  - sudo apt-get update  # needed for python3-numpy
-  - sudo apt-get install $PYTHON-dev
-  - sudo apt-get install $PYTHON-numpy
-  - sudo apt-get install $PYTHON-scipy
-  - sudo apt-get install $PYTHON-setuptools
-  - sudo apt-get install $PYTHON-nose
-  - "sudo python setup.py build install"
+  - sudo apt-get update -qq # needed for python3-numpy
+  - sudo apt-get install -qq python-dev
+  - sudo apt-get install -qq python-numpy
+  - sudo apt-get install -qq python-scipy
+  - sudo apt-get install -qq python-setuptools
+  - sudo apt-get install -qq python-matplotlib
+  - sudo apt-get install -qq python-nose
+
 # command to run tests
-script: nosetests
+script:
+  - sudo python setup.py build install
+  - nosetests

@@ -5,7 +5,6 @@ import os
 import numpy as np
 from scipy.misc import imresize
 from stl_tools import text2array, numpy2stl, text2png
-from qimshow import qimshow
 
 """
 Some basic tests for stl_tools

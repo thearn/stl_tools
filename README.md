@@ -2,6 +2,8 @@
 
 stl_tools
 =======================
+[![Build Status](https://travis-ci.org/thearn/stl_tools.png?branch=master)](https://travis-ci.org/thearn/stl_tools)
+
 Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).
 
 This allows for rapid 3D printing of text, rendered equations, or simple digital images.
@@ -28,6 +30,7 @@ want to write Python code directly.
 - [Matplotlib](http://matplotlib.org/) 1.2.1 or higher (for rendering text and LaTeX to image data)
 
 ## Installation:
+
 Run `python setup.py build install` to install.
 
 This will check for the 3rd party

@@ -1,5 +1,7 @@
 import os
-import pylab
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 
 
 def text2png(text, fn=None, fontsize=100):
@@ -16,19 +18,19 @@ def text2png(text, fn=None, fontsize=100):
     Returns: (None)
     """
 
-    f = pylab.figure(frameon=False)
+    f = plt.figure(frameon=False)
     ax = f.add_subplot(111)
-    pylab.text(0.5, 0.5, text,
-               horizontalalignment='center',
-               verticalalignment='center',
-               transform=ax.transAxes,
-               fontsize=fontsize)
+    plt.text(0.5, 0.5, text,
+             horizontalalignment='center',
+             verticalalignment='center',
+             transform=ax.transAxes,
+             fontsize=fontsize)
     ax.set_axis_off()
     ax.autoscale_view(True, True, True)
     if not fn:
         fn = ''.join(e for e in text if e.isalnum())
     f.savefig(fn + '.png', bbox_inches='tight')
-    pylab.close()
+    plt.close()
 
 
 def text2array(text, fontsize=100):
@@ -42,6 +44,6 @@ def text2array(text, fontsize=100):
     """
 
     text2png(text, fn="_text", fontsize=fontsize)
-    A = pylab.imread("_text.png")[:, :, :3].mean(axis=2)
+    A = plt.imread("_text.png")[:, :, :3].mean(axis=2)
     os.remove("_text.png")
     return A.max() - A
