@@ -1,6 +1,6 @@
 import os
 import matplotlib as mpl
-mpl.use('Agg')
+mpl.use('Agg', warn=False)
 import matplotlib.pyplot as plt
 
 
