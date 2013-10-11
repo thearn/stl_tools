@@ -68,7 +68,7 @@ numpy2stl(A, "examples/Lena.stl", scale=0.1)
 Source image vs. output geometry:
 ![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
 
-[Click to view STL (view as wireframe)](examples/Lena.stl)
+[Click to view STL](examples/Lena.stl)
 
 ---
 
@@ -90,7 +90,7 @@ Equivalent command-line syntax:
 ```
 
 ![Alt text](http://i.imgur.com/LFvw5Yn.png "Screenshot")
-[Click to view STL (view as wireframe)](examples/NASA.stl)
+[Click to view STL](examples/NASA.stl)
 
 ---
 
@@ -112,7 +112,7 @@ Equivalent command-line syntax:
 Source image vs. output geometry:
 ![Alt text](http://i.imgur.com/70wFtCR.png "Screenshot")
 
-[Click to view STL (view as wireframe)](examples/OpenMDAO-logo.stl)
+[Click to view STL](examples/OpenMDAO-logo.stl)
 
 ---
 
@@ -144,7 +144,7 @@ Source image vs. output geometry:
 ![Alt text](examples/Greens-Theorem_Navier-Stokes.png "Screenshot")
 ![Alt text](http://i.imgur.com/TgHlFGK.png "Screenshot")
 
-[Click to view STL (view as wireframe)](examples/Greens-Theorem_Navier-Stokes.stl)
+[Click to view STL](examples/Greens-Theorem_Navier-Stokes.stl)
 
 
 ## Library usage:

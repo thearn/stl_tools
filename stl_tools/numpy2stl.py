@@ -3,7 +3,7 @@ import struct
 
 import numpy as np
 
-import pylab
+
 ASCII_FACET = """  facet normal  {face[0]:e}  {face[1]:e}  {face[2]:e}
     outer loop
       vertex    {face[3]:e}  {face[4]:e}  {face[5]:e}
@@ -62,7 +62,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
               max_width=235.,
               max_depth=140.,
               max_height=150.,
-              solid=True):
+              solid=True,
+              min_thickness_percent=0.1):
     """
     Reads a numpy array, and outputs an STL file
 
@@ -86,7 +87,14 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
                                                 object (in mm). Match this to
                                                 the dimensions of a 3D printer
                                                 platform
-
+     solid (bool): sets whether to create a solid geometry (with sides and
+                    a bottom) or not.
+     min_thickness_percent (float) : when creating the solid bottom face, this
+                                    multiplier sets the minimum thickness in
+                                    the final geometry (shallowest interior
+                                    point to bottom face), as a percentage of
+                                    the thickness of the model computed up to
+                                    that point.
     Returns: (None)
     """
     m, n = A.shape
@@ -98,6 +106,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
     facets = []
     mask = np.zeros((m, n))
     for i, k in product(range(m - 1), range(n - 1)):
+        print("Creating top mesh...")
 
         this_pt = np.array([i - m / 2., k - n / 2., A[i, k]])
         top_right = np.array([i - m / 2., k + 1 - n / 2., A[i, k + 1]])
@@ -134,17 +143,23 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
     facets = np.array(facets)
 
     if solid:
+        print("Computed edges...")
         edge_mask = np.sum([roll2d(mask, (i, k))
                            for i, k in product([-1, 0, 1], repeat=2)], axis=0)
         edge_mask[np.where(edge_mask == 9.)] = 0.
         edge_mask[np.where(edge_mask != 0.)] = 1.
-        edge_mask[0::m - 1,:] = 1.
+        edge_mask[0::m - 1, :] = 1.
         edge_mask[:, 0::n - 1] = 1.
         X, Y = np.where(edge_mask == 1.)
         locs = zip(X - m / 2., Y - n / 2.)
-        minval = facets[:, 5::3].min() - 0.1 * facets[:, 5::3].ptp()
-        #[0, 0, 0, 1, 1, z, 1, 1, z, 1, 1, z]
+
+        zvals = facets[:, 5::3]
+        zmin, zthickness = zvals.min(), zvals.ptp()
+
+        minval = zmin - min_thickness_percent * zthickness
+
         bottom = []
+        print("Extending edges, creating bottom...")
         for i, facet in enumerate(facets):
             if (facet[3], facet[4]) in locs:
                 facets[i][5] = minval
@@ -153,7 +168,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
             if (facet[9], facet[10]) in locs:
                 facets[i][11] = minval
             this_bottom = np.concatenate(
-                [facet[:3], facet[6:8], [minval], facet[3:5], [minval], facet[9:11], [minval]])
+                [facet[:3], facet[6:8], [minval], facet[3:5], [minval],
+                 facet[9:11], [minval]])
             bottom.append(this_bottom)
 
         facets = np.concatenate([facets, bottom])
@@ -171,11 +187,3 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
         facets = facets * float(max_height) / zsize
 
     writeSTL(facets, fn, ascii=ascii)
-
-
-if __name__ == "__main__":
-    from scipy.ndimage import gaussian_filter
-    A = 256 * pylab.imread("openmdao.png")
-    A =  A[:,:, 0] + 1.*A[:,:, 3] # Compose some elements from RGBA to give depth
-    A = gaussian_filter(A, 2)  # smoothing
-    numpy2stl(A, "OpenMDAO-logo.stl", scale=0.05, mask_val=1.)
