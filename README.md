@@ -52,17 +52,20 @@ Automatic tests can be performed by running `stl_tools/test/test_stl.py`.
 Run the file `examples.py` to produce a few sample STL files from images included in `examples/example_data`.
 
 The first example converts the commonly-used [Lena test image](http://en.wikipedia.org/wiki/Lenna) to an STL file
-
+The "solid" keyword argument sets whether to create a solid geometry (with sides and a bottom) or not.
+The algorithm used to generate the sides and bottom have not yet been optimized, so may double the file size
+at the moment. We'll generate this example without a bottom.
 ```python
 from stl_tools import numpy2stl
 
 from scipy.misc import lena, imresize
 from scipy.ndimage import gaussian_filter
 
-A = imresize(lena(), (256,256)) # load Lena image, shrink in half
-A = gaussian_filter(A, 1) # smoothing
 
-numpy2stl(A, "examples/Lena.stl", scale=0.1)
+A = imresize(lena(), (256, 256))  # load Lena image, shrink in half
+A = gaussian_filter(A, 1)  # smoothing
+
+numpy2stl(A, "examples/Lena.stl", scale=0.1, solid=False)
 ```
 
 Source image vs. output geometry:
@@ -72,17 +75,18 @@ Source image vs. output geometry:
 
 ---
 
-The next three examples convert logos to STL, using color information to achieve appropriate 3D layering
+The next two examples convert logos to STL, using color information to achieve appropriate 3D layering.
+For this example, we'll generate a solid geometry (solid=True), for comparison to the first example.
 
 Python code:
 
 ```python
 from pylab import imread
 
-A = 256 * imread("examples/example_data/NASA.png") # 0 - 256 (8 bit) scale
-A = A[:,:, 2] + 1.0*A[:,:, 0] # Compose RGBA channels to give depth
+A = 256 * imread("examples/example_data/NASA.png")
+A = A[:, :, 2] + 1.0*A[:,:, 0] # Compose RGBA channels to give depth
 A = gaussian_filter(A, 1)  # smoothing
-numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val=5.)
+numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val=5., solid=True)
 ```
 Equivalent command-line syntax:
 ```bash
@@ -97,11 +101,10 @@ Equivalent command-line syntax:
 Python code:
 
 ```python
-A = 256.*imread("examples/example_data/openmdao.png") # 0 - 256 (8 bit) scale
-A =  A[:,:,0] + 1.*A[:,:,3] # Compose elements from RGBA  channels to give depth
-A = gaussian_filter(A, 2) # smoothing
-
-numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val = 1.)
+A = 256 * imread("examples/example_data/openmdao.png")
+A =  A[:, :, 0] + 1.*A[:,:, 3] # Compose some elements from RGBA to give depth
+A = gaussian_filter(A, 2)  # smoothing
+numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val=1., solid=False)
 ```
 
 Equivalent command-line syntax:

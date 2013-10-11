@@ -62,7 +62,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
               max_width=235.,
               max_depth=140.,
               max_height=150.,
-              solid=True,
+              solid=False,
               min_thickness_percent=0.1):
     """
     Reads a numpy array, and outputs an STL file
@@ -105,8 +105,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=-np.inf, ascii=False,
 
     facets = []
     mask = np.zeros((m, n))
+    print("Creating top mesh...")
     for i, k in product(range(m - 1), range(n - 1)):
-        print("Creating top mesh...")
 
         this_pt = np.array([i - m / 2., k - n / 2., A[i, k]])
         top_right = np.array([i - m / 2., k + 1 - n / 2., A[i, k + 1]])
