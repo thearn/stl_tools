@@ -1,7 +1,11 @@
 import struct
 import numpy as np
 
-from .cwrapped import tessellate
+try:
+    from .cwrapped import tessellate
+    c_lib = True
+except ImportError:
+    c_lib = False
 
 ASCII_FACET = """  facet normal  {face[0]:e}  {face[1]:e}  {face[2]:e}
     outer loop
@@ -62,7 +66,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
               max_depth=140.,
               max_height=150.,
               solid=False,
-              min_thickness_percent=0.1):
+              min_thickness_percent=0.1,
+              force_python=False):
     """
     Reads a numpy array, and outputs an STL file
 
@@ -105,8 +110,9 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
 
     if not mask_val:
         mask_val = A.min() - 1.
-    A = A.astype(np.float)
-    facets = tessellate(A, mask_val, min_thickness_percent, solid)
+    A = np.ascontiguousarray(A, dtype=float)
+
+    facets = np.asarray(tessellate(A, mask_val, min_thickness_percent, solid))
 
     xsize = facets[:, 3::3].ptp()
     if xsize > max_width:
