@@ -47,6 +47,10 @@ command line script `image2stl` into the `Python/Scripts` directory.
 
 Automatic tests can be performed by running `stl_tools/test/test_stl.py`.
 
+If a path to a C compiler is found by setuptools, a C-extension will be built to handle most of the computational heavy
+lifting needed by the library at runtime. The library can default to using plain python code as well, though this is
+much slower.
+
 ## Quickstart Examples:
 
 Run the file `examples.py` to produce a few sample STL files from images included in `examples/example_data`.
