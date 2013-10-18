@@ -1,4 +1,4 @@
-from scipy.misc import lena, imresize
+from scipy.misc import lena
 from pylab import imread
 from scipy.ndimage import gaussian_filter
 from stl_tools import numpy2stl, text2png
