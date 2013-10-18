@@ -8,7 +8,7 @@ from stl_tools import numpy2stl, text2png
 Some quick examples
 """
 
-A = imresize(lena(), (256, 256))  # load Lena image, shrink in half
+A = lena()  # load Lena image, shrink in half
 A = gaussian_filter(A, 1)  # smoothing
 numpy2stl(A, "examples/Lena.stl", scale=0.1, solid=False)
 
