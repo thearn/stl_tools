@@ -1,4 +1,5 @@
 *.DS_store
+*.so
 *.egg
 *.pyc
 *.x3g
