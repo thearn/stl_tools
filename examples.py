@@ -21,7 +21,7 @@ A = 256 * imread("examples/example_data/openmdao.png")
 A =  A[:, :, 0] + 1.*A[:,:, 3] # Compose some elements from RGBA to give depth
 A = gaussian_filter(A, 2)  # smoothing
 numpy2stl(A, "examples/OpenMDAO-logo.stl",
-          scale=0.05, mask_val=1., solid=True)
+          scale=0.05, mask_val=1., min_thickness_percent=0.005, solid=True)
 
 text = ("$\oint_{\Gamma} (A\, dx + B\, dy) = \iint_{U} \left(\\frac{\partial "
         "B}{\partial x} - \\frac{\partial A}{\partial y}\\right)\ dxdy$ \n\n "

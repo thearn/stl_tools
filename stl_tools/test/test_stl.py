@@ -33,11 +33,11 @@ class TestSTL(unittest.TestCase):
 
     def test_png(self):
         """ Tests creation of an STL from a PNG.
-        Covers the text2array function.
+        Covers the numpy2stl function.
         """
         output_name = "OUT_.stl"
         # test ascii output
-        A = 100*np.random.randn(64, 64)
+        A = 100 * np.random.randn(64, 64)
         numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=True)
         assert os.path.exists(output_name)
         assert os.stat(output_name).st_size > 1e5
@@ -48,10 +48,21 @@ class TestSTL(unittest.TestCase):
         assert os.stat(output_name).st_size > 1e5
         os.remove(output_name)
 
-    def test_calc_normals(self):
+    def test_png_force_py(self):
+        """ Tests creation of an STL from a PNG.
+        Covers the pure-python section of the numpy2stl function.
+        """
         output_name = "OUT_.stl"
-        A = 100*np.random.randn(64, 64)
-        numpy2stl(A, output_name, scale=0.05, mask_val=3., calc_normals=True)
+        # test ascii output
+        A = 100 * np.random.randn(64, 64)
+        numpy2stl(A, output_name, scale=0.05, mask_val=3., ascii=True,
+                  force_python=True)
+        assert os.path.exists(output_name)
+        assert os.stat(output_name).st_size > 1e5
+
+        # test binary output
+        numpy2stl(A, output_name, scale=0.05, mask_val=3.,
+                  force_python=True)
         assert os.path.exists(output_name)
         assert os.stat(output_name).st_size > 1e5
         os.remove(output_name)
