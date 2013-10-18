@@ -24,4 +24,5 @@ script:
     - mkdir $HOME/.matplotlib
     - "echo 'backend : Agg' > $HOME/.matplotlib/matplotlibrc"
     - "echo 'backend.qt4 : PyQt4' >> $HOME/.matplotlib/matplotlibrc"
-    - nosetests-$PYVER
+    - "cd stl_tools"
+    - "$PYTHON test/test_stl.py"

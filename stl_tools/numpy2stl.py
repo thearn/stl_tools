@@ -105,7 +105,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
 
     if not mask_val:
         mask_val = A.min() - 1.
-    A = A.astype(np.float, copy=False)
+    A = A.astype(np.float)
     facets = tessellate(A, mask_val, min_thickness_percent, solid)
 
     xsize = facets[:, 3::3].ptp()

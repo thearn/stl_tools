@@ -25,11 +25,8 @@ def tessellate(np.ndarray[DTYPE_t, ndim=2] A,
     cdef int idx = 0
     cdef np.ndarray item
     cdef np.ndarray facets = np.zeros([4 * m * n, 12], dtype=np.float64)
-    #cdef np.ndarray mask = np.zeros([m, n], dtype=DTYPE)
+    cdef np.ndarray mask = np.zeros([m, n], dtype=DTYPE)
 
-    #cdef np.ndarray edge_mask = np.sum([roll2d(mask, (i, k))
-    #                                    for i, k in product([-1, 0, 1],
-    #                                        repeat=2)], axis=0)
     cdef double zmin, zthickness, minval, xsize, ysize, zsize
     cdef np.ndarray X, Y
     cdef int facet_cut = 1
@@ -37,73 +34,84 @@ def tessellate(np.ndarray[DTYPE_t, ndim=2] A,
     for i in xrange(m - 1):
         for k in xrange(n - 1):
             if A[i, k] > mask_val and A[i, k + 1] > mask_val and A[i + 1, k ] > mask_val:
-                facets[idx, 3] = i -m/2.
-                facets[idx, 4] = k + 1 - n / 2.
+                facets[idx, 3] = i
+                facets[idx, 4] = k + 1
                 facets[idx, 5] = A[i, k + 1]
 
-                facets[idx, 6] = i - m / 2.
-                facets[idx, 7] = k - n / 2.
+                facets[idx, 6] = i
+                facets[idx, 7] = k
                 facets[idx, 8] = A[i, k]
 
-                facets[idx, 9] = i + 1 - m / 2.
-                facets[idx, 10] = k + 1 - n / 2.
+                facets[idx, 9] = i + 1
+                facets[idx, 10] = k + 1
                 facets[idx, 11] = A[i + 1, k + 1]
 
-                #mask[i, k] = 1
-                #mask[i, k + 1] = 1
-                #mask[i + 1, k] = 1
+                mask[i, k + 1] = 1
+                mask[i, k] = 1
+                mask[i + 1, k] = 1
 
                 idx += 1
 
             if A[i + 1, k + 1] > mask_val and A[i, k] > mask_val and A[i + 1, k] > mask_val:
-                facets[idx, 3] = i - m / 2.
-                facets[idx, 4] = k - n / 2.
+                facets[idx, 3] = i
+                facets[idx, 4] = k
                 facets[idx, 5] = A[i, k]
 
-                facets[idx, 6] = i + 1 - m / 2.
-                facets[idx, 7] = k - n / 2.
+                facets[idx, 6] = i + 1
+                facets[idx, 7] = k
                 facets[idx, 8] = A[i + 1, k]
 
-                facets[idx, 9] = i + 1 - m / 2.
-                facets[idx, 10] = k + 1 - n / 2.
+                facets[idx, 9] = i + 1
+                facets[idx, 10] = k + 1
                 facets[idx, 11] = A[i + 1, k + 1]
 
-                #mask[i, k] = 1
-                #mask[i + 1, k + 1] = 1
-                #mask[i + 1, k] = 1
+                mask[i, k] = 1
+                mask[i + 1, k + 1] = 1
+                mask[i + 1, k] = 1
 
                 idx += 1
 
-    # if solid:
-    #     facet_cut = 2
-    #     edge_mask[np.where(edge_mask == 9.)] = 0.
-    #     edge_mask[np.where(edge_mask != 0.)] = 1.
-    #     edge_mask[0::m - 1, :] = 1.
-    #     edge_mask[:, 0::n - 1] = 1.
-    #     X, Y = np.where(edge_mask == 1.)
-    #     locs = np.array(zip(X - m / 2., Y - n / 2.))
+    cdef np.ndarray edge_mask = np.sum([roll2d(mask, (i, k))
+                                        for i, k in product([-1, 0, 1],
+                                            repeat=2)], axis=0)
 
-    #     zvals = facets[:, 5::3]
-    #     zmin, zthickness = zvals.min(), zvals.ptp()
+    if solid:
+        facet_cut = 2
+        edge_mask[np.where(edge_mask == 9.)] = 0.
+        edge_mask[np.where(edge_mask != 0.)] = 1.
+        edge_mask[0::m - 1, :] = 1.
+        edge_mask[:, 0::n - 1] = 1.
 
-    #     minval = zmin - min_thickness_percent * zthickness
+        #X, Y = np.where(edge_mask == 1.)
+        #locs = np.array(zip(X - m / 2., Y - n / 2.))
 
-    #     for i in xrange(idx):
+        zvals = facets[:, 5::3]
+        zmin, zthickness = zvals.min(), zvals.ptp()
 
+        minval = zmin - min_thickness_percent * zthickness
 
-    #             facets[idx+i, 3] = i_ - m / 2.
-    #             facets[idx+i, 4] = k_ - n / 2.
-    #             facets[idx+i, 5] = minval
+        for i in xrange(idx):
 
-    #             facets[idx+i, 6] = i_ + 1 - m / 2.
-    #             facets[idx+i, 7] = k_ - n / 2.
-    #             facets[idx+i, 8] = minval
+                # if (facet[3], facet[4]) in locs:
+                #     facets[i][5] = minval
+                # if (facet[6], facet[7]) in locs:
+                #     facets[i][8] = minval
+                # if (facet[9], facet[10]) in locs:
+                #     facets[i][11] = minval
 
-    #             facets[idx+i, 9] = i_ + 1 - m / 2.
-    #             facets[idx+i, 10] = k_ + 1 - n / 2.
-    #             facets[idx+i, 11] = minval
+                facets[idx+i, 3] = facets[i, 6]
+                facets[idx+i, 4] = facets[i, 7]
+                facets[idx+i, 5] = minval
 
-    return facets[:idx]
+                facets[idx+i, 6] = facets[i, 3]
+                facets[idx+i, 7] = facets[i, 4]
+                facets[idx+i, 8] = minval
+
+                facets[idx+i, 9] = facets[i, 9]
+                facets[idx+i, 10] = facets[i, 10]
+                facets[idx+i, 11] = minval
+
+    return facets[:facet_cut*idx]
 
 
 @cython.boundscheck(False)
