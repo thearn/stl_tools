@@ -88,9 +88,6 @@ def tessellate(double[:, ::1] A,
         edge_mask[0::m - 1, :] = 1.
         edge_mask[:, 0::n - 1] = 1.
 
-        #X, Y = np.where(edge_mask == 1.)
-        #locs = np.array(zip(X - m / 2., Y - n / 2.))
-
         for i in xrange(idx):
             if facets[i, 5] < zmin:
                 zmin = facets[i, 5]
@@ -119,13 +116,6 @@ def tessellate(double[:, ::1] A,
 
             if edge_mask[ <int> facets[i, 9], <int> facets[i, 10]] != 0:
                 facets[i, 11] = minval
-
-            # if (facet[3], facet[4]) in locs:
-            #     facets[i][5] = minval
-            # if (facet[6], facet[7]) in locs:
-            #     facets[i][8] = minval
-            # if (facet[9], facet[10]) in locs:
-            #     facets[i][11] = minval
 
             facets[idx+i, 3] = facets[i, 6]
             facets[idx+i, 4] = facets[i, 7]
