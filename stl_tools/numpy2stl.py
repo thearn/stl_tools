@@ -65,6 +65,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
               max_depth=140.,
               max_height=150.,
               solid=False,
+              rotate=True,
               min_thickness_percent=0.1,
               force_python=False):
     """
@@ -100,7 +101,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
     """
 
     m, n = A.shape
-    if n >= m:
+    if n >= m and rotate:
         # rotate to best fit a printing platform
         A = np.rot90(A, k=3)
         m, n = n, m
