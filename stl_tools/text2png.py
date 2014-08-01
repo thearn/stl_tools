@@ -4,7 +4,7 @@ mpl.use('Agg', warn=False)
 import matplotlib.pyplot as plt
 
 
-def text2png(text, fn=None, fontsize=100):
+def text2png(text, fn=None, fontsize=100, dpi=100):
     """
     Renders inputted text to a png image using matplotlib.
 
@@ -26,10 +26,10 @@ def text2png(text, fn=None, fontsize=100):
              transform=ax.transAxes,
              fontsize=fontsize)
     ax.set_axis_off()
-    ax.autoscale_view(True, True, True)
+    #f.set_size_inches(18.5,10.5)
     if not fn:
         fn = ''.join(e for e in text if e.isalnum())
-    f.savefig(fn + '.png', bbox_inches='tight')
+    f.savefig(fn + '.png', bbox_inches='tight', dpi=dpi)
     plt.close()
 
 
