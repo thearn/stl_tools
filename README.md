@@ -2,7 +2,7 @@
 
 stl_tools
 =======================
-[![Build Status](https://travis-ci.org/thearn/stl_tools.png?branch=master)](https://travis-ci.org/thearn/stl_tools)
+<!--[![Build Status](https://travis-ci.org/thearn/stl_tools.png?branch=master)](https://travis-ci.org/thearn/stl_tools)-->
 
 Python code to generate STL geometry files from plain text, LaTeX code, and 2D numpy arrays (matrices).
 
