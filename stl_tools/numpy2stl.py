@@ -100,6 +100,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
     Returns: (None)
     """
 
+    A = A.astype('float32')
+
     m, n = A.shape
     if n >= m and rotate:
         # rotate to best fit a printing platform
@@ -123,6 +125,64 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
     else:  # use python + numpy
         facets = []
         mask = np.zeros((m, n))
+        print("Calculting min value...")
+        for i, k in product(range(m - 1), range(n - 1)):
+
+            this_pt = np.array([i - m / 2., k - n / 2., A[i, k]])
+            top_right = np.array([i - m / 2., k + 1 - n / 2., A[i, k + 1]])
+            bottom_left = np.array([i + 1. - m / 2., k - n / 2., A[i + 1, k]])
+            bottom_right = np.array(
+                [i + 1. - m / 2., k + 1 - n / 2., A[i + 1, k + 1]])
+
+            n1, n2 = np.zeros(3), np.zeros(3)
+
+            if (this_pt[-1] > mask_val and top_right[-1] > mask_val and
+                    bottom_left[-1] > mask_val):
+
+                facet = np.concatenate([n1, top_right, this_pt, bottom_right])
+                mask[i, k] = 1
+                mask[i, k + 1] = 1
+                mask[i + 1, k] = 1
+                facets.append(facet)
+
+            if (this_pt[-1] > mask_val and bottom_right[-1] > mask_val and
+                    bottom_left[-1] > mask_val):
+
+                facet = np.concatenate(
+                    [n2, bottom_right, this_pt, bottom_left])
+                facets.append(facet)
+                mask[i, k] = 1
+                mask[i + 1, k + 1] = 1
+                mask[i + 1, k] = 1
+        facets = np.array(facets)
+
+        if solid:
+            print("Pushing border edges down...")
+            edge_mask = np.sum([roll2d(mask, (i, k))
+                               for i, k in product([-1, 0, 1], repeat=2)],
+                               axis=0)
+            edge_mask[np.where(edge_mask == 9.)] = 0.
+            edge_mask[np.where(edge_mask != 0.)] = 1.
+            edge_mask[0::m - 1, :] = 1.
+            edge_mask[:, 0::n - 1] = 1.
+            X, Y = np.where(edge_mask == 1.)
+            locs = zip(X - m / 2., Y - n / 2.)
+
+            zvals = facets[:, 5::3]
+            zmin, zthickness = zvals.min(), zvals.ptp()
+
+            minval = np.float32(zmin - min_thickness_percent * zthickness)
+
+            for i in xrange(len(A[0])):
+                A[0][i] = minval
+                A[-1][i] = minval
+
+            for i in xrange(len(A)):
+                A[i][0] = minval
+                A[i][-1] = minval
+
+        facets = []
+
         print("Creating top mesh...")
         for i, k in product(range(m - 1), range(n - 1)):
 
@@ -155,30 +215,6 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
         facets = np.array(facets)
 
         if solid:
-            print("Computed edges...")
-            edge_mask = np.sum([roll2d(mask, (i, k))
-                               for i, k in product([-1, 0, 1], repeat=2)],
-                               axis=0)
-            edge_mask[np.where(edge_mask == 9.)] = 0.
-            edge_mask[np.where(edge_mask != 0.)] = 1.
-            edge_mask[0::m - 1, :] = 1.
-            edge_mask[:, 0::n - 1] = 1.
-            X, Y = np.where(edge_mask == 1.)
-            locs = zip(X - m / 2., Y - n / 2.)
-
-            zvals = facets[:, 5::3]
-            zmin, zthickness = zvals.min(), zvals.ptp()
-
-            minval = zmin - min_thickness_percent * zthickness
-
-            print("Pushing border edges down...")
-            for i, facet in enumerate(facets):
-                if (facet[3], facet[4]) in locs:
-                    facets[i][5] = minval
-                if (facet[6], facet[7]) in locs:
-                    facets[i][8] = minval
-                if (facet[9], facet[10]) in locs:
-                    facets[i][11] = minval
 
             print("Creating bottom...")
 
@@ -199,13 +235,13 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
                     right_top +
                     left_top +
                     left_bottom
-                ),
+                , 'float32'),
                 np.array(
                     normals +
                     right_top +
                     left_bottom +
                     right_bottom
-                )
+                , 'float32')
             ]
 
             facets = np.concatenate([facets, bottom])
