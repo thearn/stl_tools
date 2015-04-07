@@ -171,8 +171,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
 
             minval = zmin - min_thickness_percent * zthickness
 
-            bottom = []
-            print("Extending edges, creating bottom...")
+            print("Pushing border edges down...")
             for i, facet in enumerate(facets):
                 if (facet[3], facet[4]) in locs:
                     facets[i][5] = minval
@@ -180,10 +179,34 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
                     facets[i][8] = minval
                 if (facet[9], facet[10]) in locs:
                     facets[i][11] = minval
-                this_bottom = np.concatenate(
-                    [facet[:3], facet[6:8], [minval], facet[3:5], [minval],
-                     facet[9:11], [minval]])
-                bottom.append(this_bottom)
+
+            print("Creating bottom...")
+
+            normals = [0,0,0]
+
+            i, k = (0, 0)
+            left_top = [i - m / 2., k - n / 2., minval]
+            i, k = (m-1, 0)
+            right_top = [i - m / 2., k - n / 2., minval]
+            i, k = (0, n-1)
+            left_bottom = [i - m / 2., k - n / 2., minval]
+            i, k = (m-1, n-1)
+            right_bottom = [i - m / 2., k - n / 2., minval]
+
+            bottom = [
+                np.array(
+                    normals +
+                    right_top +
+                    left_top +
+                    left_bottom
+                ),
+                np.array(
+                    normals +
+                    right_top +
+                    left_bottom +
+                    right_bottom
+                )
+            ]
 
             facets = np.concatenate([facets, bottom])
 
