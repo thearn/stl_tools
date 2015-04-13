@@ -102,6 +102,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
 
     A = A.astype('float32')
 
+    print " =============> min array value", np.amin(A)
+
     m, n = A.shape
     if n >= m and rotate:
         # rotate to best fit a printing platform
