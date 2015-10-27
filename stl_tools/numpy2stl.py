@@ -1,3 +1,26 @@
+#***
+#* Copyright 2015 thern (github)
+#* Copyright 2015 Melanie Cornelius
+#* 
+#* Licensed under the Apache License, Version 2.0 (the "License");
+#* you may not use this file except in compliance with the License.
+#* You may obtain a copy of the License at
+#* 
+#*     http://www.apache.org/licenses/LICENSE-2.0
+#* 
+#* Unless required by applicable law or agreed to in writing, software
+#* distributed under the License is distributed on an "AS IS" BASIS,
+#* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#* See the License for the specific language governing permissions and
+#* limitations under the License.*
+#*
+#*
+#* Modifications made by Melanie Cornelius (nee Dooley) to include option
+#* for square corner generation using force_python option
+#* as well as to fix a bug in which vertical spikes were formed due to a
+#* percieved typo error on (what is now) line 165.
+#***
+
 import struct
 import numpy as np
 from itertools import product
@@ -67,7 +90,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
               solid=False,
               rotate=True,
               min_thickness_percent=0.1,
-              force_python=False):
+              force_python=False,
+              square_corners=False):
     """
     Reads a numpy array, and outputs an STL file
 
@@ -97,6 +121,8 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
                                     point to bottom face), as a percentage of
                                     the thickness of the model computed up to
                                     that point.
+     square_corners (bool) - When using force_python, generates square-corner
+                             polygons as opposed to triangular polygons
     Returns: (None)
     """
 
@@ -134,24 +160,40 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
 
             n1, n2 = np.zeros(3), np.zeros(3)
 
-            if (this_pt[-1] > mask_val and top_right[-1] > mask_val and
-                    bottom_left[-1] > mask_val):
+            if not square_corners:
+                if (this_pt[-1] > mask_val and top_right[-1] > mask_val and
+                        bottom_right[-1] > mask_val):
 
-                facet = np.concatenate([n1, top_right, this_pt, bottom_right])
-                mask[i, k] = 1
-                mask[i, k + 1] = 1
-                mask[i + 1, k] = 1
-                facets.append(facet)
+                    facet = np.concatenate([n1, top_right, this_pt, bottom_right])
+                    mask[i, k] = 1
+                    mask[i, k + 1] = 1
+                    mask[i + 1, k] = 1
+                    facets.append(facet)
 
-            if (this_pt[-1] > mask_val and bottom_right[-1] > mask_val and
-                    bottom_left[-1] > mask_val):
+                if (this_pt[-1] > mask_val and bottom_right[-1] > mask_val and
+                        bottom_left[-1] > mask_val):
 
-                facet = np.concatenate(
-                    [n2, bottom_right, this_pt, bottom_left])
-                facets.append(facet)
-                mask[i, k] = 1
-                mask[i + 1, k + 1] = 1
-                mask[i + 1, k] = 1
+                    facet = np.concatenate(
+                        [n2, bottom_right, this_pt, bottom_left])
+                    facets.append(facet)
+                    mask[i, k] = 1
+                    mask[i + 1, k + 1] = 1
+                    mask[i + 1, k] = 1
+            
+            else:
+                # Changes made by Melanie Cornelius (mseryn)
+                if (this_pt[-1] > mask_val and top_right[-1] > mask_val and
+                        bottom_right[-1] > mask_val and bottom_left[-1] > mask_val):
+
+                    mask[i, k] = 1
+                    mask[i, k + 1] = 1
+                    mask[i + 1, k] = 1
+                    mask[i + 1, k + 1] = 1
+                    facet = np.concatenate([n1, top_right, this_pt, bottom_right])
+                    facets.append(facet)
+
+                    facet = np.concatenate([n2, bottom_right, this_pt, bottom_left])
+                    facets.append(facet)
         facets = np.array(facets)
 
         if solid:
