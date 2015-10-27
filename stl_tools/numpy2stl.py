@@ -135,7 +135,7 @@ def numpy2stl(A, fn, scale=0.1, mask_val=None, ascii=False,
             n1, n2 = np.zeros(3), np.zeros(3)
 
             if (this_pt[-1] > mask_val and top_right[-1] > mask_val and
-                    bottom_left[-1] > mask_val):
+                    bottom_right[-1] > mask_val):
 
                 facet = np.concatenate([n1, top_right, this_pt, bottom_right])
                 mask[i, k] = 1
