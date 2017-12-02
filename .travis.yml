@@ -1,28 +1,28 @@
-# vim ft=yaml
-# travis-ci.org definition for stl_tools build
-#
+language: python
+python:
+  - "2.7"
+  - "3.6"
 
-language: c
-env:
-    - PYTHON=python PYSUF='' PYVER=2.7
-    - PYTHON=python3 PYSUF='3' PYVER=3.2
+notifications:
+  email: false
+
 install:
-    - sudo apt-get update  # needed for python3-numpy
-    - sudo apt-get install $PYTHON-dev
-    - sudo apt-get install $PYTHON-numpy
-    - sudo apt-get install $PYTHON-scipy
-    - sudo apt-get install $PYTHON-setuptools
-    - sudo apt-get install $PYTHON-nose
-    - sudo easy_install$PYSUF pip
-    - sudo pip install Pillow
-    - if [[ $PYVER == '2.7' ]]; then sudo apt-get install $PYTHON-matplotlib; fi
-    - if [[ $PYVER == '3.2' ]]; then sudo pip-$PYVER install git+git://github.com/matplotlib/matplotlib.git@v1.2.x; fi
-    - $PYTHON setup.py build
-    - sudo $PYTHON setup.py install
+  # set up basic conda env via miniconda
+  - sudo apt-get update
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  # install deps
+  - conda install pytest numpy scipy matplotlib
+  - python setup.py develop
+
 script:
-    # Change into an innocuous directory and find tests from installation
-    - mkdir $HOME/.matplotlib
-    - "echo 'backend : Agg' > $HOME/.matplotlib/matplotlibrc"
-    - "echo 'backend.qt4 : PyQt4' >> $HOME/.matplotlib/matplotlibrc"
-    - "cd stl_tools"
-    - "$PYTHON test/test_stl.py"
+  - pytest stl_tools
