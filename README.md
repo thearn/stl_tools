@@ -28,131 +28,26 @@ want to write Python code directly.
 - [Numpy](http://www.numpy.org/) 1.7 or higher (for array manipulation)
 - [Scipy](http://www.scipy.org/) 0.12 or higher (for resizing and filtering functions)
 - [Matplotlib](http://matplotlib.org/) 1.2.1 or higher (for rendering text and LaTeX to image data)
+- [SciKitImage](http://scikit-image.org/) 0.13.1 or higher (for loading / manipulating images)
 
 ## Installation:
-There are two ways to install `stl_tools`.
+Build the docker container using the command:
 
-It's recommended that you install Numpy, Scipy, and Matplotlib first, either
-using binary installers (windows) or using a package manager (`apt-get`,
-`homebrew`), etc.
+```
+  docker build -t stl_tools
+```
 
-### Installing straight from `PyPI`:
-Run `pip install stl_tools`.
+and run the container using the command:
 
-### Installing from Source:
-Run `python setup.py build install` to install.
+```
+docker run -v /tmp/output:/output -it stl /bin/bash
+```
 
-Either method will also install the
-command line script `image2stl` into the `Python/Scripts` directory.
-
-Automatic tests can be performed by running `stl_tools/test/test_stl.py`.
-
-If a path to a C compiler is found by setuptools, a C-extension will be built to handle most of the computational heavy
-lifting needed by the library at runtime. The library can default to using plain python code as well, though this is
-much slower.
+** When using the container, any files placed in the `/output` folder of the container will be available in `/tmp/output` on the host.
 
 ## Quickstart Examples:
 
-Run the file `examples.py` to produce a few sample STL files from images included in `examples/example_data`.
-
-The first example converts the commonly-used [Lena test image](http://en.wikipedia.org/wiki/Lenna) to an STL file
-The "solid" keyword argument sets whether to create a solid geometry (with sides and a bottom) or not.
-The algorithm used to generate the sides and bottom have not yet been optimized, so may double the file size
-at the moment. We'll generate this example without a bottom.
-```python
-from stl_tools import numpy2stl
-
-from scipy.misc import lena, imresize
-from scipy.ndimage import gaussian_filter
-
-
-A = imresize(lena(), (256, 256))  # load Lena image, shrink in half
-A = gaussian_filter(A, 1)  # smoothing
-
-numpy2stl(A, "examples/Lena.stl", scale=0.1, solid=False)
-```
-
-Source image vs. output geometry:
-![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
-
-[Click to view STL](examples/Lena.stl)
-
----
-
-The next two examples convert logos to STL, using color information to achieve appropriate 3D layering.
-For this example, we'll generate a solid geometry (solid=True), for comparison to the first example.
-
-Python code:
-
-```python
-from pylab import imread
-
-A = 256 * imread("examples/example_data/NASA.png")
-A = A[:, :, 2] + 1.0*A[:,:, 0] # Compose RGBA channels to give depth
-A = gaussian_filter(A, 1)  # smoothing
-numpy2stl(A, "examples/NASA.stl", scale=0.05, mask_val=5., solid=True)
-```
-Equivalent command-line syntax:
-```bash
-> image2stl NASA.png -scale 0.05 -mask_val 5. -RGBA_weights 1. 0. 1. 0. -gaussian_filter 1
-```
-
-![Alt text](http://i.imgur.com/LFvw5Yn.png "Screenshot")
-[Click to view STL](examples/NASA.stl)
-
----
-
-Python code:
-
-```python
-A = 256 * imread("examples/example_data/openmdao.png")
-A =  A[:, :, 0] + 1.*A[:,:, 3] # Compose some elements from RGBA to give depth
-A = gaussian_filter(A, 2)  # smoothing
-numpy2stl(A, "examples/OpenMDAO-logo.stl", scale=0.05, mask_val=1., solid=False)
-```
-
-Equivalent command-line syntax:
-```bash
-> image2stl openmdao.png -scale 0.05 -mask_val 1. -RGBA_weights 1. 0. 0. 1. -gaussian_filter 2
-```
-
-Source image vs. output geometry:
-![Alt text](http://i.imgur.com/70wFtCR.png "Screenshot")
-
-[Click to view STL](examples/OpenMDAO-logo.stl)
-
----
-
-Finally, this example renders a LaTeX expression into a png image, then converts this image to an STL.
-
-Note that LaTeX expressions which coincidentally contain special ASCII markers (such as `\n` and `\r`)
-have to be escaped with an additional slash in those positions in order to be properly rendered, unless these
-markers are intended.
-
-Python code:
-
-```python
-from stl_tools import numpy2stl, text2png, text2array
-
-text = ("$\oint_{\Gamma} (A\, dx + B\, dy) = \iint_{U} \left(\\frac{\partial "
-        "B}{\partial x} - \\frac{\partial A}{\partial y}\\right)\ dxdy$ \n\n "
-        "$\\frac{\partial \\rho}{\partial t} + \\frac{\partial}{\partial x_j}"
-        "\left[ \\rho u_j \\right] = 0$")
-text2png(text, "examples/Greens-Theorem_Navier-Stokes", fontsize=50) #save png
-
-A = imread("examples/Greens-Theorem_Navier-Stokes.png") # read from rendered png
-A = A.mean(axis=2) #grayscale projection
-A = gaussian_filter(A.max() - A, 1.)
-
-numpy2stl(A, "examples/Greens-Theorem_Navier-Stokes.stl", scale=0.2,
-                                                         mask_val = 5.)
-```
-Source image vs. output geometry:
-![Alt text](examples/Greens-Theorem_Navier-Stokes.png "Screenshot")
-![Alt text](http://i.imgur.com/TgHlFGK.png "Screenshot")
-
-[Click to view STL](examples/Greens-Theorem_Navier-Stokes.stl)
-
+Run the example using the command `python test.py` to produce a few sample STL files from images included in `examples` directory.
 
 ## Library usage:
 There are 3 principal functions (no classes) to import and use from stl_tools:
@@ -232,14 +127,6 @@ However, it may be useful in it's own right. For example, it can be used alone t
 There may be a direct way to render the matplotlib figure as an array without using an intermediate file, but I could not seem to find a simple
 way in the matplotlib docs.
 
-## Command-line scripts
-
-### `image2stl`
-
-`image2stl` is a command-line script that is installed via entry points when `setup.py` is run.
-This provides a simple command-line interface to the functions of this library, with the same
-arguments. See the examples above for usage.
-
 ## Tips:
 
 - Consider scaling down a digital image before generating an STL from its pixels.
@@ -277,4 +164,3 @@ across platforms.
 - It's possible to apply various warping functions to the resulting
 meshes. So you could load an image, warp the result into a cylinder, and have a
 textured column (or something like that).
-
