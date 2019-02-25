@@ -1,4 +1,3 @@
-![Alt text](http://i.imgur.com/CdZzhBp.png "Screenshot")
 
 stl_tools
 =======================
