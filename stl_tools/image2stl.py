@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 import numpy as np
-from numpy2stl import numpy2stl
+from stl_tools.numpy2stl import numpy2stl
 from pylab import imread
 from scipy.ndimage import gaussian_filter
 
