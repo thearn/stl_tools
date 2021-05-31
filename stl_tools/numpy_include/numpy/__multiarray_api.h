@@ -221,7 +221,7 @@ NPY_NO_EXPORT  void PyArray_FillObjectArray \
 NPY_NO_EXPORT  int PyArray_FillWithScalar \
        (PyArrayObject *, PyObject *);
 NPY_NO_EXPORT  npy_bool PyArray_CheckStrides \
-       (int, int, npy_intp, npy_intp, npy_intp const *, npy_intp const *);
+       (int, int, npy_intp, npy_intp, npy_intp *, npy_intp *);
 NPY_NO_EXPORT  PyArray_Descr * PyArray_DescrNewByteorder \
        (PyArray_Descr *, char);
 NPY_NO_EXPORT  PyObject * PyArray_IterAllButAxis \
@@ -245,7 +245,7 @@ NPY_NO_EXPORT  PyObject * PyArray_NewFlagsObject \
 NPY_NO_EXPORT  npy_bool PyArray_CanCastScalar \
        (PyTypeObject *, PyTypeObject *);
 NPY_NO_EXPORT  int PyArray_CompareUCS4 \
-       (npy_ucs4 const *, npy_ucs4 const *, size_t);
+       (npy_ucs4 *, npy_ucs4 *, size_t);
 NPY_NO_EXPORT  int PyArray_RemoveSmallest \
        (PyArrayMultiIterObject *);
 NPY_NO_EXPORT  int PyArray_ElementStrides \
@@ -403,9 +403,9 @@ NPY_NO_EXPORT  int PyArray_RegisterCanCast \
 NPY_NO_EXPORT  void PyArray_InitArrFuncs \
        (PyArray_ArrFuncs *);
 NPY_NO_EXPORT  PyObject * PyArray_IntTupleFromIntp \
-       (int, npy_intp const *);
+       (int, npy_intp *);
 NPY_NO_EXPORT  int PyArray_TypeNumFromName \
-       (char const *);
+       (char *);
 NPY_NO_EXPORT  int PyArray_ClipmodeConverter \
        (PyObject *, NPY_CLIPMODE *);
 NPY_NO_EXPORT  int PyArray_OutputConverter \
@@ -425,7 +425,7 @@ NPY_NO_EXPORT  int PyArray_SearchsideConverter \
 NPY_NO_EXPORT  PyObject * PyArray_CheckAxis \
        (PyArrayObject *, int *, int);
 NPY_NO_EXPORT  npy_intp PyArray_OverflowMultiplyList \
-       (npy_intp const *, int);
+       (npy_intp *, int);
 NPY_NO_EXPORT  int PyArray_CompareString \
        (const char *, const char *, size_t);
 NPY_NO_EXPORT  PyObject* PyArray_MultiIterFromObjects \
@@ -873,7 +873,7 @@ static void **PyArray_API=NULL;
         (*(int (*)(PyArrayObject *, PyObject *)) \
          PyArray_API[104])
 #define PyArray_CheckStrides \
-        (*(npy_bool (*)(int, int, npy_intp, npy_intp, npy_intp const *, npy_intp const *)) \
+        (*(npy_bool (*)(int, int, npy_intp, npy_intp, npy_intp *, npy_intp *)) \
          PyArray_API[105])
 #define PyArray_DescrNewByteorder \
         (*(PyArray_Descr * (*)(PyArray_Descr *, char)) \
@@ -909,7 +909,7 @@ static void **PyArray_API=NULL;
         (*(npy_bool (*)(PyTypeObject *, PyTypeObject *)) \
          PyArray_API[116])
 #define PyArray_CompareUCS4 \
-        (*(int (*)(npy_ucs4 const *, npy_ucs4 const *, size_t)) \
+        (*(int (*)(npy_ucs4 *, npy_ucs4 *, size_t)) \
          PyArray_API[117])
 #define PyArray_RemoveSmallest \
         (*(int (*)(PyArrayMultiIterObject *)) \
@@ -1146,10 +1146,10 @@ static void **PyArray_API=NULL;
         (*(void (*)(PyArray_ArrFuncs *)) \
          PyArray_API[195])
 #define PyArray_IntTupleFromIntp \
-        (*(PyObject * (*)(int, npy_intp const *)) \
+        (*(PyObject * (*)(int, npy_intp *)) \
          PyArray_API[196])
 #define PyArray_TypeNumFromName \
-        (*(int (*)(char const *)) \
+        (*(int (*)(char *)) \
          PyArray_API[197])
 #define PyArray_ClipmodeConverter \
         (*(int (*)(PyObject *, NPY_CLIPMODE *)) \
@@ -1179,7 +1179,7 @@ static void **PyArray_API=NULL;
         (*(PyObject * (*)(PyArrayObject *, int *, int)) \
          PyArray_API[206])
 #define PyArray_OverflowMultiplyList \
-        (*(npy_intp (*)(npy_intp const *, int)) \
+        (*(npy_intp (*)(npy_intp *, int)) \
          PyArray_API[207])
 #define PyArray_CompareString \
         (*(int (*)(const char *, const char *, size_t)) \
@@ -1476,12 +1476,21 @@ _import_array(void)
       return -1;
   }
 
+#if PY_VERSION_HEX >= 0x03000000
   if (!PyCapsule_CheckExact(c_api)) {
       PyErr_SetString(PyExc_RuntimeError, "_ARRAY_API is not PyCapsule object");
       Py_DECREF(c_api);
       return -1;
   }
   PyArray_API = (void **)PyCapsule_GetPointer(c_api, NULL);
+#else
+  if (!PyCObject_Check(c_api)) {
+      PyErr_SetString(PyExc_RuntimeError, "_ARRAY_API is not PyCObject object");
+      Py_DECREF(c_api);
+      return -1;
+  }
+  PyArray_API = (void **)PyCObject_AsVoidPtr(c_api);
+#endif
   Py_DECREF(c_api);
   if (PyArray_API == NULL) {
       PyErr_SetString(PyExc_RuntimeError, "_ARRAY_API is NULL pointer");
@@ -1528,7 +1537,13 @@ _import_array(void)
   return 0;
 }
 
-#define import_array() {if (_import_array() < 0) {PyErr_Print(); PyErr_SetString(PyExc_ImportError, "numpy.core.multiarray failed to import"); return NULL; } }
+#if PY_VERSION_HEX >= 0x03000000
+#define NUMPY_IMPORT_ARRAY_RETVAL NULL
+#else
+#define NUMPY_IMPORT_ARRAY_RETVAL
+#endif
+
+#define import_array() {if (_import_array() < 0) {PyErr_Print(); PyErr_SetString(PyExc_ImportError, "numpy.core.multiarray failed to import"); return NUMPY_IMPORT_ARRAY_RETVAL; } }
 
 #define import_array1(ret) {if (_import_array() < 0) {PyErr_Print(); PyErr_SetString(PyExc_ImportError, "numpy.core.multiarray failed to import"); return ret; } }
 

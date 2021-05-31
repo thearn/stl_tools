@@ -135,13 +135,7 @@ typedef struct {
 } PyScalarObject;
 
 #define PyStringScalarObject PyStringObject
-#define PyStringScalarObject PyStringObject
-typedef struct {
-        /* note that the PyObject_HEAD macro lives right here */
-        PyUnicodeObject base;
-        Py_UCS4 *obval;
-} PyUnicodeScalarObject;
-
+#define PyUnicodeScalarObject PyUnicodeObject
 
 typedef struct {
         PyObject_VAR_HEAD

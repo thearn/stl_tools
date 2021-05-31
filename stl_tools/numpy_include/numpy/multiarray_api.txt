@@ -144,11 +144,6 @@ new reference -- accepts NULL for mintype
   PyArray_ConvertToCommonType(PyObject *op, int *retn)
 
 
-This function is only used in one place within NumPy and should
-generally be avoided. It is provided mainly for backward compatibility.
-
-The user of the function has to free the returned array.
-
 ::
 
   PyArray_Descr *
@@ -583,8 +578,7 @@ Assumes contiguous
 
   npy_bool
   PyArray_CheckStrides(int elsize, int nd, npy_intp numbytes, npy_intp
-                       offset, npy_intp const *dims, npy_intp const
-                       *newstrides)
+                       offset, npy_intp *dims, npy_intp *newstrides)
 
 
 ::
@@ -698,8 +692,7 @@ TODO: For NumPy 2.0, add a NPY_CASTING parameter.
 ::
 
   int
-  PyArray_CompareUCS4(npy_ucs4 const *s1, npy_ucs4 const *s2, size_t
-                      len)
+  PyArray_CompareUCS4(npy_ucs4 *s1, npy_ucs4 *s2, size_t len)
 
 
 ::
@@ -1395,14 +1388,14 @@ Initialize arrfuncs to NULL
 ::
 
   PyObject *
-  PyArray_IntTupleFromIntp(int len, npy_intp const *vals)
+  PyArray_IntTupleFromIntp(int len, npy_intp *vals)
 
 PyArray_IntTupleFromIntp
 
 ::
 
   int
-  PyArray_TypeNumFromName(char const *str)
+  PyArray_TypeNumFromName(char *str)
 
 
 ::
@@ -1484,7 +1477,7 @@ convert 0-d arrays to 1-d arrays
 ::
 
   npy_intp
-  PyArray_OverflowMultiplyList(npy_intp const *l1, int n)
+  PyArray_OverflowMultiplyList(npy_intp *l1, int n)
 
 Multiply a List of Non-negative numbers with over-flow detection.
 
@@ -2176,6 +2169,60 @@ dtype->subarray is true, dtype will be decrefed.
                                    *out_dims, PyArrayObject
                                    **out_arr, PyObject *context)
 
+Retrieves the array parameters for viewing/converting an arbitrary
+PyObject* to a NumPy array. This allows the "innate type and shape"
+of Python list-of-lists to be discovered without
+actually converting to an array.
+
+In some cases, such as structured arrays and the __array__ interface,
+a data type needs to be used to make sense of the object.  When
+this is needed, provide a Descr for 'requested_dtype', otherwise
+provide NULL. This reference is not stolen. Also, if the requested
+dtype doesn't modify the interpretation of the input, out_dtype will
+still get the "innate" dtype of the object, not the dtype passed
+in 'requested_dtype'.
+
+If writing to the value in 'op' is desired, set the boolean
+'writeable' to 1.  This raises an error when 'op' is a scalar, list
+of lists, or other non-writeable 'op'.
+
+Result: When success (0 return value) is returned, either out_arr
+is filled with a non-NULL PyArrayObject and
+the rest of the parameters are untouched, or out_arr is
+filled with NULL, and the rest of the parameters are
+filled.
+
+Typical usage:
+
+PyArrayObject *arr = NULL;
+PyArray_Descr *dtype = NULL;
+int ndim = 0;
+npy_intp dims[NPY_MAXDIMS];
+
+if (PyArray_GetArrayParamsFromObject(op, NULL, 1, &dtype,
+&ndim, dims, &arr, NULL) < 0) {
+return NULL;
+}
+if (arr == NULL) {
+... validate/change dtype, validate flags, ndim, etc ...
+// Could make custom strides here too
+arr = PyArray_NewFromDescr(&PyArray_Type, dtype, ndim,
+dims, NULL,
+is_f_order ? NPY_ARRAY_F_CONTIGUOUS : 0,
+NULL);
+if (arr == NULL) {
+return NULL;
+}
+if (PyArray_CopyObject(arr, op) < 0) {
+Py_DECREF(arr);
+return NULL;
+}
+}
+else {
+... in this case the other parameters weren't filled, just
+validate and possibly copy arr itself ...
+}
+... use arr ...
 
 ::
 

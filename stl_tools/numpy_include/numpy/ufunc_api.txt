@@ -27,151 +27,156 @@ NumPy Ufunc C-API
                           *kwds, PyArrayObject **op)
 
 
-::
+This generic function is called with the ufunc object, the arguments to it,
+and an array of (pointers to) PyArrayObjects which are NULL.
 
-  void
-  PyUFunc_f_f_As_d_d(char **args, npy_intp const *dimensions, npy_intp
-                     const *steps, void *func)
-
+'op' is an array of at least NPY_MAXARGS PyArrayObject *.
 
 ::
 
   void
-  PyUFunc_d_d(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
-
-
-::
-
-  void
-  PyUFunc_f_f(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_f_f_As_d_d(char **args, npy_intp *dimensions, npy_intp
+                     *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_g_g(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_d_d(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_F_F_As_D_D(char **args, npy_intp const *dimensions, npy_intp
-                     const *steps, void *func)
+  PyUFunc_f_f(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_F_F(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_g_g(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_D_D(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_F_F_As_D_D(char **args, npy_intp *dimensions, npy_intp
+                     *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_G_G(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_F_F(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_O_O(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_D_D(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_ff_f_As_dd_d(char **args, npy_intp const *dimensions, npy_intp
-                       const *steps, void *func)
+  PyUFunc_G_G(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_ff_f(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_O_O(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_dd_d(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_ff_f_As_dd_d(char **args, npy_intp *dimensions, npy_intp
+                       *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_gg_g(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_ff_f(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_FF_F_As_DD_D(char **args, npy_intp const *dimensions, npy_intp
-                       const *steps, void *func)
+  PyUFunc_dd_d(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_DD_D(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_gg_g(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_FF_F(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_FF_F_As_DD_D(char **args, npy_intp *dimensions, npy_intp
+                       *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_GG_G(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_DD_D(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_OO_O(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_FF_F(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_O_O_method(char **args, npy_intp const *dimensions, npy_intp
-                     const *steps, void *func)
+  PyUFunc_GG_G(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_OO_O_method(char **args, npy_intp const *dimensions, npy_intp
-                      const *steps, void *func)
+  PyUFunc_OO_O(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_On_Om(char **args, npy_intp const *dimensions, npy_intp const
-                *steps, void *func)
+  PyUFunc_O_O_method(char **args, npy_intp *dimensions, npy_intp
+                     *steps, void *func)
+
+
+::
+
+  void
+  PyUFunc_OO_O_method(char **args, npy_intp *dimensions, npy_intp
+                      *steps, void *func)
+
+
+::
+
+  void
+  PyUFunc_On_Om(char **args, npy_intp *dimensions, npy_intp *steps, void
+                *func)
 
 
 ::
@@ -239,43 +244,43 @@ owns a new reference to errobj.
 ::
 
   void
-  PyUFunc_e_e(char **args, npy_intp const *dimensions, npy_intp const
-              *steps, void *func)
+  PyUFunc_e_e(char **args, npy_intp *dimensions, npy_intp *steps, void
+              *func)
 
 
 ::
 
   void
-  PyUFunc_e_e_As_f_f(char **args, npy_intp const *dimensions, npy_intp
-                     const *steps, void *func)
+  PyUFunc_e_e_As_f_f(char **args, npy_intp *dimensions, npy_intp
+                     *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_e_e_As_d_d(char **args, npy_intp const *dimensions, npy_intp
-                     const *steps, void *func)
+  PyUFunc_e_e_As_d_d(char **args, npy_intp *dimensions, npy_intp
+                     *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_ee_e(char **args, npy_intp const *dimensions, npy_intp const
-               *steps, void *func)
+  PyUFunc_ee_e(char **args, npy_intp *dimensions, npy_intp *steps, void
+               *func)
 
 
 ::
 
   void
-  PyUFunc_ee_e_As_ff_f(char **args, npy_intp const *dimensions, npy_intp
-                       const *steps, void *func)
+  PyUFunc_ee_e_As_ff_f(char **args, npy_intp *dimensions, npy_intp
+                       *steps, void *func)
 
 
 ::
 
   void
-  PyUFunc_ee_e_As_dd_d(char **args, npy_intp const *dimensions, npy_intp
-                       const *steps, void *func)
+  PyUFunc_ee_e_As_dd_d(char **args, npy_intp *dimensions, npy_intp
+                       *steps, void *func)
 
 
 ::
