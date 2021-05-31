@@ -1,13 +1,12 @@
 from setuptools import setup, Extension
-import numpy as np
+import os 
 
 SRC_DIR = "stl_tools"
-PACKAGES = [SRC_DIR]
 
 ext_1 = Extension(SRC_DIR + ".cwrapped",
                   [SRC_DIR + "/cwrapped.c"],
                   libraries=[],
-                  include_dirs=[np.get_include()])
+                  include_dirs=[os.path.join(SRC_DIR, 'numpy_include')])
 EXTENSIONS = [ext_1]
 
 setup(name='stl_tools',
