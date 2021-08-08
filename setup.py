@@ -1,11 +1,13 @@
-from setuptools import setup, Extension
+from setuptools import dist, setup, Extension
+
+dist.Distribution().fetch_build_eggs(['numpy'])
 import numpy as np
 
 SRC_DIR = "stl_tools"
 PACKAGES = [SRC_DIR]
 
 ext_1 = Extension(SRC_DIR + ".cwrapped",
-                  [SRC_DIR + "/cwrapped.c"],
+                  [SRC_DIR + "/cwrapped.pyx"],
                   libraries=[],
                   include_dirs=[np.get_include()])
 EXTENSIONS = [ext_1]
@@ -20,6 +22,7 @@ setup(name='stl_tools',
       license='Apache 2.0',
       packages=['stl_tools'],
       ext_modules=EXTENSIONS,
+      setup_requires=['cython'],
       entry_points={
           'console_scripts':
           ['image2stl=stl_tools.image2stl:image2stl']
