@@ -2,8 +2,11 @@
 *.so
 *.egg
 *.pyc
+*.pyd
 *.x3g
+/.eggs
 /build
 /dist
 *egg-info
 .coverage
+stl_tools/cwrapped.c
