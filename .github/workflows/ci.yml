@@ -24,4 +24,4 @@ jobs:
         run: |
           pip install nose
       - name: Test
-        run: nosetests3 stl_tools --with-coverage --cover-package=stl_tools
+        run: nosetests stl_tools --with-coverage --cover-package=stl_tools
