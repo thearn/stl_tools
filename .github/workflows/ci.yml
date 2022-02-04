@@ -22,7 +22,7 @@ jobs:
           architecture: 'x64'
       - name: Install dependencies
         run: |
-          pip install nose
+          pip install nose coverage
           pip install -e .
       - name: Test
         run: nosetests stl_tools --with-coverage --cover-package=stl_tools
