@@ -1,0 +1,28 @@
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+        id: checkout
+      - uses: actions/setup-python@v2
+        name: Install Python 3.8
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+      - name: Install dependencies
+        run: |
+          pip install nose coverage
+          pip install -e .
+      - name: Test
+        run: nosetests stl_tools --with-coverage --cover-package=stl_tools

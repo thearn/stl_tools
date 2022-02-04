@@ -10,9 +10,9 @@ ext_1 = Extension(SRC_DIR + ".cwrapped",
 EXTENSIONS = [ext_1]
 
 setup(name='stl_tools',
-      version='0.4.1',
+      version='0.4.2',
       install_requires=[
-        'numpy==1.18.1',
+        'numpy>=1.18.1',
         'scipy',
         'matplotlib'],
       description="Generate STL files from numpy arrays and text",
