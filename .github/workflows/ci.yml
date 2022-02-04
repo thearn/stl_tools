@@ -23,5 +23,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install nose
+          pip install -e .
       - name: Test
         run: nosetests stl_tools --with-coverage --cover-package=stl_tools
